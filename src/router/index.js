@@ -22,17 +22,16 @@ export default new Router({
       component: index
     },
     {
-<<<<<<< HEAD
       path: '/address',
       name: 'address',
       component: address,
       meta: { title: "地区价格表" }
-=======
+    },
+    {
       path:'/advertises',name:'advertises',component:()=>import('../views/advertises/index')
     },
     {
       path:'recommend',name:'recommend',component:()=>import('../views/recommend/index')
->>>>>>> master
     }
 
 
