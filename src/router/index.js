@@ -20,6 +20,15 @@ export default new Router({
       path: '/',
       name: 'index',
       component: index
+    },
+    {
+      path:'/advertises',name:'advertises',component:()=>import('../views/advertises/index')
+    },
+    {
+      path:'recommend',name:'recommend',component:()=>import('../views/recommend/index')
     }
+
+
+
   ]
 })
