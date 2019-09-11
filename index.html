@@ -2,9 +2,15 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta id="meta-viewport" name="viewport" content="width=device-width,initial-scale=1.0">
     <meta http-equiv="Access-Control-Allow-Origin" content="*" />
     <title>official_website_html</title>
+    <script>
+      (function () { //手机版、小程序750设计稿转手机等比例显示
+              var bl = (window.innerWidth / 750) * 1.0;
+              document.getElementById('meta-viewport').setAttribute('content', 'width=device-width, initial-scale=' + bl + ', maximum-scale=' + bl + ', minimum-scale=' + bl + ', user-scalable=no');
+      })();
+    </script>
   </head>
   <body>
     <div id="app"></div>
