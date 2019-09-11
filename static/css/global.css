@@ -11,7 +11,7 @@ input,select,textarea {font-family: inherit;box-sizing: border-box}
 img {width: 100%;border: 0;}
 output {speak: digits}
 html {font-size: 16px}
-body {font-family: FZY3JW--GB1-0;line-height: 1.5;-webkit-user-select: none;color: #33373d;fill: currentColor;-webkit-tap-highlight-color: transparent;-webkit-text-size-adjust: none;-webkit-touch-callout: none;background-color: #fff;}
+body {font-family: '微软雅黑';line-height: 1.5;-webkit-user-select: none;color: #33373d;fill: currentColor;-webkit-tap-highlight-color: transparent;-webkit-text-size-adjust: none;-webkit-touch-callout: none;background-color: #fff;}
 @media screen and (min-width:375px) {
     html {
       font-size: calc(100% + 2 * (100vw - 375px)/ 39);
