@@ -14,6 +14,8 @@ import store from './store/store'
 import VueLazyload from 'vue-lazyload'
 import '../src/assets/iconfont/css/iconfont.css'
 import VueRouter from 'vue-router'
+import VueWechatTitle from 'vue-wechat-title'
+Vue.use(VueWechatTitle)
 Vue.use(VueRouter)
 Vue.use(VueLazyload, {
   preLoad: 1.3,
