@@ -67,7 +67,7 @@ export default {
       width:100%;
     }
   }
-   @media screen and (min-width: 750px) {
+   @media screen and (min-width: 1200px) {
     .bg{
       height:auto!important;
     }

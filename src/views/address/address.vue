@@ -2,13 +2,21 @@
     <div>
        <div class="addressBg">
           <div class="address_box">
-            <div class="city">
+            <div class="city" >
                 <div class="city_choice">
                   <img class="dw" src="../../img/szcs.png" alt="">
                   <p>所在城市</p>
-                  <img class="qh" src="../../img/qh.png" alt="">
+                  <img class="qh" src="../../img/qh.png" alt="" @click="choiceCity()">
                 </div>
-                <div class="city_show"></div>
+                <div class="city_show">
+                  <div class="block city_show_1" >
+                    <el-cascader
+                      v-model="value"
+                      :options="options"
+                      @click="choiceCity()"
+                      @change="handleChange"></el-cascader>
+                  </div>
+                </div>
             </div>
             <div class="price">
               <div class="price1">
@@ -41,15 +49,41 @@
 <script>
 import $ from 'jquery'
 export default {
-  name: 'index',
-  components:{
-  },
-  methods:{
-   
-  },
-  mounted(){
-  }
-}
+    name:'index',
+    data() {
+      return {
+        value: ['fujian','xiamen'],
+        options: [{
+          value: 'fujian',
+          label: '福建',
+          children: [{
+            value: 'xiamen',
+            label: '厦门市',
+          }, {
+            value: 'quanzhou',
+            label: '泉州市',
+          }]
+        },{
+          value: 'guangzhou',
+          label: '广州',
+          children: [{
+            value: 'shenzheng',
+            label: '深圳'
+          }]
+        }],
+        cityVal:'',
+        bgShow:false,
+      };
+    },
+    methods: {
+      handleChange(value) {
+      },
+      choiceCity(){
+        $('.el-input').click();
+        this.cityVal = $('.el-input__inner').val();
+      }
+    }
+  };
 </script>
 <style lang="less" scoped>
 .addressBg{
@@ -76,19 +110,29 @@ export default {
         .dw{
           width:20px;
           margin-left: 5%;
-          margin-top: 35px;
+          margin-top: 32px;
           float: left;
         }
         p{
           float: left;
           margin-left: 15px;
-          font-size:1.2rem;
+          font-size:26px;
         }
         .qh{
           width:120px;
           float:right;
           margin-top: 30px;
           margin-right: 20px;
+        }
+      }
+      .city_show{
+        .city_show_1{
+          width:100%;
+          margin:30px auto 0px;
+          .el-cascader{
+            width:100%;
+            border:0px!important;
+          }
         }
       }
     }
@@ -194,12 +238,68 @@ export default {
     }
   }
 }
+
 @media screen and (max-width:750px) {
 .addressBg{
   width:100%;
 }
 }
+@media screen and (min-width:1200px) {
+.addressBg .address_box .price .price2 .p1{
+  font-size: 1.4rem;
+  line-height: 60px;
+}
+
+.addressBg .address_box .price .price2 .p2{
+  font-size: 1rem;
+}
+.addressBg .address_box .price .price2 .p3{
+  font-size: 1rem;
+}
+.addressBg .address_box .price .price2 .p4{
+  font-size: 1rem;
+}
+.addressBg .address_box .price .price2 .p5{
+  font-size: 0.8rem;
+}
+.addressBg .address_box .price .price3 .p7{
+  font-size: 1rem;
+}
+.addressBg .address_box .price .price3 .p8{
+  font-size: 1rem;
+}
+}
 </style>
 <style lang="less">
-
+.el-input__inner{
+  text-align: center;
+  border:0px;
+}
+.el-input__icon{
+  display: none;
+}
+.el-input{
+  font-size: 32px;
+  text-align: center;
+}
+.el-cascader-menu{
+  min-width: 336px;
+}
+.el-cascader-panel{
+  font-size: 28px;
+}
+.el-cascader-node.in-active-path{
+  height:60px;
+  color:#f34845;
+}
+.el-cascader-node{
+  height: 60px;
+  line-height: 60px;
+}
+.el-cascader-node.in-active-path, .el-cascader-node.is-active, .el-cascader-node.is-selectable.in-checked-path{
+  color:#f34845;
+}
+.el-cascader-node__prefix{
+  left:285px;
+}
 </style>
