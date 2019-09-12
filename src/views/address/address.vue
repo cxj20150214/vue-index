@@ -240,9 +240,7 @@ export default {
 }
 
 @media screen and (max-width:750px) {
-.addressBg{
-  width:100%;
-}
+
 }
 @media screen and (min-width:1200px) {
 .addressBg .address_box .price .price2 .p1{
@@ -302,4 +300,9 @@ export default {
 .el-cascader-node__prefix{
   left:285px;
 }
+</style>
+<style lang="less">
+  @media screen and (max-width:750px) {
+   
+  }
 </style>
