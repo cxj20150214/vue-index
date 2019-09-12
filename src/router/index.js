@@ -25,7 +25,7 @@ export default new Router({
       path:'/advertises',name:'advertises',component:()=>import('../views/advertises/index')
     },
     {
-      path:'recommend',name:'recommend',component:()=>import('../views/recommend/index')
+      path:'/recommend',name:'recommend',component:()=>import('../views/recommend/index')
     }
 
 

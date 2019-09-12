@@ -24,7 +24,7 @@
       <p class="adv_2_cont">每单的费用，公司只收取少数的佣金，大部分都归司机所有，按劳分配，平时日均200+,多劳多得。春节期间日均收入500+。</p>  
       </div>   
     </div>
-    <div class="adv_1">
+    <div class="adv_1 mb3">
       <div class="adv_ti"><span>招聘需求</span></div>
         <div class="adv_3_1">
           <div class="adv_3_2">
@@ -39,9 +39,18 @@
     </div>
     <div class="adv_1">
       <div class="adv_ti"><span>报名信息</span></div>
-      <form>
-      </form>
+       <div class="adv_4" ref="putcontent">
+        <p class="adv_p"><label for="name">姓名：</label><input v-model="name" placeholder="请输入您的名字"></p>
+        <p class="adv_p"><label for="tel1">电话：</label><input v-model="tel1" placeholder="请输入您的电话"></p>
+        <p class="adv_p"><label for="age">驾龄：</label><input v-model="age" placeholder="请输入您的驾龄"></p>
+        <p class="adv_p"><label for="addr">地区：</label><input v-model="addr" placeholder="请选择省市"></p>
+        <p class="adv_p"><label for="company">公司：</label><input v-model="company" placeholder="请选择公司"></p>
+        <p class="adv_p" v-if='company'><label for="tel2">联系电话：</label><input v-model="tel2" placeholder="请输入您的联系电话"></p>
+        <el-cascader :props="props"></el-cascader>
+        <p class="adv_btn"><button type="submit">提交</button></p>
+       </div>
     </div>
+  <div class="adv_5" @click="toadv4()"><a href="javascript:;">立即报名</a></div>
 
 
     
@@ -51,10 +60,52 @@
 <script>
 export default {
   components:{
+  },
+  data:function () {
+    return {
+      name:'',
+      tel1:'',
+      age:'',
+      addr:'',
+      company:'',
+      tel2:'',
+      props: {
+      lazy: true,
+      lazyLoad (node, resolve) {
+        const { level } = node;
+        setTimeout(() => {
+          const nodes = Array.from({ length: level + 1 })
+            .map(item => ({
+              value: 1,
+              label: `选项`,
+              leaf: level >= 2
+            }));
+          // 通过调用resolve将子节点数据返回，通知组件数据加载完成
+          resolve(nodes);
+        }, 1000);
+      }
+    }
+    }
+    
+  },
+  methods:{
+    toadv4(){     
+      let height=this.$refs.putcontent.clientHeight;
+      if(true){
+        this.$refs.putcontent.scrollIntoView()
+      }else{
+       document.documentElement ? document.documentElement.scrollTop=height : document.body.scrollTop=height
+      }
+
+        
+
+      
+    }
+
   }
 }
 </script>
-<style>
+<style lang="less">
 .adv_bg{
   background:-moz-linear-gradient(right,#2d6efc,#1b8cf6);
   background:-webkit-linear-gradient(right,#2d6efc,#1b8cf6);
@@ -121,19 +172,19 @@ export default {
 .adv_2_1{margin-top: 2.8rem}
 .adv_3_1{margin-top: 2.5rem;}
 .adv_3_1,.adv_3_2{position: relative;}
-.adv_3_2{padding:1.667rem}
+.adv_3_2{padding:2rem}
 .adv_3_1::before,.adv_3_1::after,.adv_3_2::before,.adv_3_2::after{
   position: absolute;
   width: 2.3rem;
   height: 2.3rem;
   content: '';
 }
+.mb3{margin-bottom: 3rem}
 .adv_3_1::before{
   top:0;
   left: 0;
   border-top:1px solid #ffc739;
   border-left: 1px solid #ffc739;
-
 }
 .adv_3_1::after{
   top:0;
@@ -170,4 +221,29 @@ export default {
   background-repeat: no-repeat;
   background-size: 100%; 
 }
+.adv_4{
+  color: #666;
+  label{
+    color: #333;
+  }
+}
+.adv_p{
+  border-bottom:1px solid #e0e0e0;
+  margin-bottom: .8rem;
+  padding-bottom: .55rem;
+  margin-top: .8rem;
+  line-height: 2;
+  }
+  .adv_5{
+    background-color: #f4d31c;
+    bottom: 0;
+    width: 100%;
+    font-size: 1.15rem;
+    color: #fff;
+    line-height: 3.1rem;
+    position: fixed;
+    
+    
+
+  }
 </style>
