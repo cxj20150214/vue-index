@@ -32,9 +32,11 @@ export default new Router({
     },
     {
       path:'/recommend',name:'recommend',component:()=>import('../views/recommend/index')
-    }
-
-
-
+    },
+    {
+      path: '/invitation',
+      name: 'invitation',
+      component:()=>import('../views/invitation/invitation')
+    },
   ]
 })

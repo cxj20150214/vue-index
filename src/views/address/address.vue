@@ -52,22 +52,23 @@ export default {
     name:'index',
     data() {
       return {
-        value: ['fujian','xiamen'],
+        value: ['1','11'],
         options: [{
-          value: 'fujian',
+          value: '1',
           label: '福建',
           children: [{
-            value: 'xiamen',
+            value: '11',
             label: '厦门市',
-          }, {
-            value: 'quanzhou',
+          },{
+            value: '泉州市',
             label: '泉州市',
-          }]
+          },
+          ]
         },{
-          value: 'guangzhou',
+          value: '1',
           label: '广州',
           children: [{
-            value: 'shenzheng',
+            value: '深圳',
             label: '深圳'
           }]
         }],
@@ -82,6 +83,9 @@ export default {
         $('.el-input').click();
         this.cityVal = $('.el-input__inner').val();
       }
+    },
+    mounted(){
+ 
     }
   };
 </script>
