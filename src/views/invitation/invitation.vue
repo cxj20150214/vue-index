@@ -4,7 +4,12 @@
           <img class="dibu" src="../../img/yaoqin_bg1.png" alt="">
           <img class="title" src="../../img/yaoqin_bg2.png" alt="">
           <div class="content">
-            
+            <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm yaoqinForm">
+              <el-form-item  prop="yaoqin">
+                <el-input v-model="ruleForm.yaoqin" class="yaoqinInput"></el-input>
+              </el-form-item>
+                <el-button type="primary" class="yaoqinSub" @click="submitForm('ruleForm')">立即创建</el-button>
+            </el-form>
           </div>
         </div>
     </div>
@@ -15,13 +20,36 @@ export default {
   name: 'invitation',
   components:{
   },
+    data() {
+      return {
+        ruleForm: {
+          yaoqin: '',
+        },
+        rules: {
+          yaoqin: [
+            { required: true, message: '请输入邀请码', trigger: 'blur' },
+            { min: 3, max: 50, message: '长度在 3 到 50 个字符', trigger: 'blur' }
+          ]
+        }
+      };
+   },
   methods:{
     getHeight(){
       $(document).ready(function(){
          var windowHeight = $(window).height()
          $('.bg').css('height',windowHeight)
       })
-    }
+    },
+    submitForm(ruleForm) {
+        this.$refs[ruleForm].validate((valid) => {
+          if (valid) {
+            alert('绑定成功!');
+          } else {
+            console.log('绑定失败!!');
+            return false;
+          }
+        });
+    },
   },
   mounted(){
    this.getHeight()
@@ -52,25 +80,43 @@ export default {
       height:566px;
       margin:0px auto;
       background-image: url('../../img/coin.png');
+      display: flex;
     }
+  }
+  .yaoqinForm{
+    width:300px;
+    margin-left: 100px;
+    margin-top: 195px;
+  }
+  .yaoqinSub{
+    margin-top: 140px;
+    width:330px;
   }
   @media screen and (max-width: 750px) {
     .bg{
       width:100%;
     }
   }
-   @media screen and (min-width: 1200px) {
+   @media screen and (min-width: 750px) {
     .bg{
-      height:auto!important;
+      height:1200px!important;
     }
-    .bg .link .android{
-      height: 140px;
-    }
-    .bg .link .iphone{
-      height: 140px;
-    }
-    .bg .link{
-      height: auto!important;
-    }
+   
+  }
+</style>
+<style lang="">
+    .el-input__inner{
+      border:0px;
+      font-size: 1.4rem;
+      height: 50px;
+      line-height: 50px;
+  }
+  .el-form-item__error{
+    padding-top: 15px;
+    font-size: 16px;
+  }
+  .el-button{
+        padding: 25px 20px;
+        opacity: 0;
   }
 </style>
