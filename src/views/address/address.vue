@@ -52,13 +52,22 @@ export default {
     name:'index',
     data() {
       return {
-        value: ['1','11'],
+        value: ['1','11','111'],
         options: [{
           value: '1',
           label: '福建',
           children: [{
             value: '11',
             label: '厦门市',
+            children:[{
+              value: '111',
+              label: '思明区',
+              },
+              {
+              value: '222',
+              label: '湖里区',
+              },
+            ]
           },{
             value: '泉州市',
             label: '泉州市',
@@ -243,8 +252,10 @@ export default {
   }
 }
 
-@media screen and (max-width:750px) {
-
+@media screen and (min-width:750px) {
+.addressBg{
+  height:1200px;
+}
 }
 @media screen and (min-width:1200px) {
 .addressBg .address_box .price .price2 .p1{
@@ -285,7 +296,7 @@ export default {
   text-align: center;
 }
 .el-cascader-menu{
-  min-width: 336px;
+  min-width: 225px;
 }
 .el-cascader-panel{
   font-size: 28px;
