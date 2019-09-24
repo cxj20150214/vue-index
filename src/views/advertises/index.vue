@@ -9,7 +9,7 @@
       </div>
       <div class=""><img src="../../img/hsfimg10.jpg"></div>
     </div>
-    <div class="adv_1">
+    <!-- <div class="adv_1">
       <div class="adv_ti"><span>工作特点</span></div>
       <div class="adv_2_1">
       <p class="adv_2_ti">1.时间自由</p>
@@ -23,8 +23,8 @@
       <p class="adv_2_ti">5.待遇丰厚</p>
       <p class="adv_2_cont">每单的费用，公司只收取少数的佣金，大部分都归司机所有，按劳分配，平时日均200+,多劳多得。春节期间日均收入500+。</p>  
       </div>   
-    </div>
-    <div class="adv_1 mb3">
+    </div> -->
+    <!-- <div class="adv_1 mb3">
       <div class="adv_ti"><span>招聘需求</span></div>
         <div class="adv_3_1">
           <div class="adv_3_2">
@@ -36,7 +36,7 @@
             <p class="adv_3_ti">自备智能手机一部接受派单</p>
           </div>
         </div>
-    </div>
+    </div> -->
     <div class="adv_1">
       <div class="adv_ti"><span>报名信息</span></div>
        <div class="adv_4" ref="putcontent">
@@ -110,6 +110,7 @@ export default {
   background:-moz-linear-gradient(right,#2d6efc,#1b8cf6);
   background:-webkit-linear-gradient(right,#2d6efc,#1b8cf6);
   background: linear-gradient(to right,#2d6efc,#1b8cf6);
+  padding-bottom: 2px;
   }
 .adv_1{
   position: relative;
