@@ -7,13 +7,14 @@
           <p class="username">用户名</p>
           <p calss="usertel">156****8665</p>
         </div>
-        <div class="getmonery">提现</div>
+        <div class="getmonery"  @click="totixian">提现</div>
       </div>
       <div class="user_pro">
         <div class="user_pro1"><p>0.56</p>收益</div>
         <div class="user_pro2"><p>0.56</p>余额</div>
       </div>
-      <div class="user_rec">已邀请<span>8</span>人</div>
+      <div class="user_rec" @click="toreward">奖励细明&nbsp;<i class="iconfont icon-arrowright"></i>
+      </div>
     </div>
     <div class="recom2">
       <p class="recom2_p1">洪师傅邀请轻松赚零花钱</p>
@@ -25,7 +26,6 @@
       <img src="../../img/wx.png">
       <span class="recom31">参与</span>
     </div>
-
 
   </div>
 </template>
@@ -40,12 +40,24 @@ export default {
     
   },
   methods:{
-
+    toreward(){
+      this.$router.push({ path: '/reward'})
+    },
+    totixian(){
+      this.$router.push({ path: '/tixian'})
+    },
 
   }
 }
 </script>
 <style lang="less">
+    .icon {
+       width: 1em; height: 1em;
+       vertical-align: -0.15em;
+       fill: currentColor;
+       overflow: hidden;
+    }
+
 .recom1{
   background: url(../../img/hsfimg6.jpg);
   background-repeat: no-repeat;
@@ -82,30 +94,14 @@ export default {
     color: #fff;
     justify-content:space-around;
     font-size: .8rem;
-    padding-top: 4.5rem;
+    padding-top: calc(100% * 0.12077);
     p{font-size: 1.34rem;color:#ffde00}   
     }
 .user_rec{
   font-size: .9rem;
   color: #ff5949;
-  margin-top: calc(0.055 * 100vw);;
-  span{
-    position: relative;
-    color: #585858; 
-    font-size: 1rem;
-    padding-left: .2rem;
-    padding-right: .2rem;
-  &::before{
-    width: .6rem;
-    height: 0.2rem;
-    content: '';
-    background-color: #33f0ca;
-    position: absolute;
-    border-radius: 50%;
-    bottom: 0;
-    z-index: 0
-  }
-  }}
+  margin-top: calc(0.055 * 100vw);
+}
 .recom2{
   background: url(../../img/hsfimg7.jpg);
   background-repeat: no-repeat;

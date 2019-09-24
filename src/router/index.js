@@ -26,8 +26,13 @@ export default new Router({
     },
     {
       path:'/recommend',name:'recommend',component:()=>import('../views/recommend/index')
+    },
+    {
+      path:'/tixian',name:'tixian',component:()=>import('../views/recommend/tixian.vue')
+    },
+    {
+      path:'/reward',name:'reward',component:()=>import('../views/recommend/reward.vue')
     }
-
 
 
   ]
