@@ -14,7 +14,9 @@ import store from './store/store'
 import VueLazyload from 'vue-lazyload'
 import '../src/assets/iconfont/css/iconfont.css'
 import VueRouter from 'vue-router'
+import VueWechatTitle from 'vue-wechat-title'
 Vue.use(VueRouter)
+Vue.use(VueWechatTitle)
 Vue.use(VueLazyload, {
   preLoad: 1.3,
   // error: require('@/img/case1.png'),   //请求失败后显示的图片
