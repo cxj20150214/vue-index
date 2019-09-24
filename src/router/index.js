@@ -38,5 +38,20 @@ export default new Router({
       name: 'invitation',
       component:()=>import('../views/invitation/invitation')
     },
+    {
+      path: '/trip',
+      name: 'trip',
+      component:()=>import('../views/trip/index')
+    },
+    {
+      path: '/evaluate',
+      name: 'evaluate',
+      component:()=>import('../views/evaluate/index')
+    },
+    {
+      path: '/test',
+      name: 'test',
+      component:()=>import('../views/evaluate/test')
+    }
   ]
 })
