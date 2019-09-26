@@ -58,6 +58,11 @@ export default new Router({
       path: '/test',
       name: 'test',
       component:()=>import('../views/evaluate/test')
+    },
+    {
+      path: '/callDriver',
+      name: 'callDriver',
+      component:()=>import('../views/callDriver/index')
     }
   ]
 })
