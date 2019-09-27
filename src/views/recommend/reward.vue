@@ -2,7 +2,7 @@
   <div class="reward">
       <div class="rew_info">
           <p>将账户余额将提现到微信</p>
-          <p class="rew_price">￥ 800.00</p>
+          <p class="rew_price">￥ 8000.00</p>
           <p class="rew_totail">当前可提现金额：￥8563.23  （最小提现额度1元）</p>
       </div>
       <p class="rew_wx">提现到微信</p>

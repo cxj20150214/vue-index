@@ -6,7 +6,7 @@
         <div class="box_1">
           <img src="../../img/xr.png" alt />
           <p>
-            1小时30分钟
+            1小时40分钟
             <span style="margin-left:15px">8.8公里</span>
             <span class="price">¥50</span>
           </p>
