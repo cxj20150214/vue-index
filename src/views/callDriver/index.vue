@@ -22,7 +22,18 @@
         </div>
       </div>
       <p class="qibu">18元起步，查看服务价格和接单范围</p>
-      <el-button type="danger" class="button_hujiao" @click="dialogFormVisible = true">呼叫司机</el-button>
+      <el-button
+        type="danger"
+        class="button_hujiao"
+        v-if="dialoglogin ==false"
+        @click="dialogFormVisible = true"
+      >呼叫司机</el-button>
+      <el-button
+        type="danger"
+        class="button_hujiao"
+        v-if="dialoglogin ==true"
+        @click="callDriver()"
+      >呼叫司机</el-button>
     </div>
     <el-dialog class="phoneVerification" :visible.sync="dialogFormVisible" width="90%">
       <div class="root">
@@ -70,6 +81,7 @@ export default {
   data() {
     return {
       dialogFormVisible: false,
+      dialoglogin: false,
       Register: {
         phone: "",
         sendcode: ""
@@ -135,6 +147,7 @@ export default {
             center: true,
             customClass: "zccg"
           });
+          this.dialoglogin = true
         } else {
           this.$message({
             message: "请填写完整",
@@ -144,6 +157,14 @@ export default {
           this.dialogFormVisible = true;
           return false;
         }
+      });
+    },
+    callDriver() {
+      this.$message({
+        message: "呼叫成功",
+        type: "success",
+        center: true,
+        customClass: "zccg"
       });
     }
   }
@@ -320,7 +341,7 @@ export default {
   height: 60px;
   line-height: 60px;
 }
-.root .el-form-item__error{
-    display: none;
+.root .el-form-item__error {
+  display: none;
 }
 </style>
