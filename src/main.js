@@ -1,7 +1,7 @@
 // The Vue build version to load with the `import` command
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
-import Vue from 'vue'
 import ElementUI from 'element-ui'
+import Vue from 'vue'
 import App from './App'
 import router from './router'
 import 'element-ui/lib/theme-chalk/index.css'
@@ -15,6 +15,7 @@ import VueLazyload from 'vue-lazyload'
 import '../src/assets/iconfont/css/iconfont.css'
 import VueRouter from 'vue-router'
 import VueWechatTitle from 'vue-wechat-title'
+Vue.use(ElementUI)
 Vue.use(VueRouter)
 Vue.use(VueWechatTitle)
 Vue.use(VueLazyload, {
@@ -24,7 +25,6 @@ Vue.use(VueLazyload, {
   attempt: 1     // 加载图片数量
 })
 Vue.prototype.$axios = axios;
-Vue.use(ElementUI)
 Vue.use(animated)
 
 /* eslint-disable no-new */
