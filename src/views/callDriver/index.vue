@@ -15,7 +15,7 @@
             <i class="iconfont icon-dingwei icon1"></i>
             <p class="txt">选择出发地</p>
           </div>
-          <p class="address">
+          <p class="address"> 
             福建省厦门市思明区体育中心
             <span>></span>
           </p>
@@ -102,25 +102,15 @@ export default {
     sendcode() {
       const reg = 11 && /^((13|14|15|17|18)[0-9]{1}\d{8})$/;
       if (this.Register.phone == "") {
-        this.$message({
-          message: "手机号不能为空",
-          center: true
-        });
+        alert('手机号不能为空')
         return;
       }
       if (!reg.test(this.Register.phone)) {
-        this.$message({
-          message: "请输入正确的手机号",
-          center: true
-        });
+        alert('请输入正确的手机号')
         return;
       } else {
         console.log(this.Register.phone);
-        this.$message({
-          message: "发送成功",
-          type: "success",
-          center: true
-        });
+        alert('发送成功')
         this.time = 60;
         this.disabled = true;
         this.timer();
@@ -141,31 +131,17 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-          this.$message({
-            message: "注册成功",
-            type: "success",
-            center: true,
-            customClass: "zccg"
-          });
+          alert("注册成功")
           this.dialoglogin = true
         } else {
-          this.$message({
-            message: "请填写完整",
-            center: true,
-            customClass: "zccg"
-          });
+          alert("请填写完整")
           this.dialogFormVisible = true;
           return false;
         }
       });
     },
     callDriver() {
-      this.$message({
-        message: "呼叫成功",
-        type: "success",
-        center: true,
-        customClass: "zccg"
-      });
+      alert('呼叫成功')
     }
   }
 };
