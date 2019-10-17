@@ -11,35 +11,40 @@
                 <div class="city_show">
                   <div class="block city_show_1" >
                     <el-cascader
+                      ref="myCascader"
                       v-model="value"
-                      :options="options"
+                      :options="data"
                       @click="choiceCity()"
                       @change="handleChange"></el-cascader>
                   </div>
                 </div>
             </div>
-            <div class="price">
-              <div class="price1">
+            <div class="price" >
+              <div class="load" v-loading="loading">
+              <div class="price1" v-show="priceShow">
                  <div class="price1_1">
-                  厦门市地区价格表
+                  {{regName}}价格表
                  </div>
               </div>
-              <div class="price2">
+              <div class="price2" v-for="item in priceList" v-show="priceShow">
                   <div class="p_box">
                     <img class="dbx" src="../../img/dbx1 (1).png" alt="">
-                    <p class="p1">微信叫代驾只需<span>18</span>元</p>
+                    <p class="p1">微信叫代驾只需<span>{{item.startprice}}</span>元</p>
                     <img class="dbx1" src="../../img/dbx1 (2).png" alt="">
                   </div>
-                  <p class="p2">含5.5km(07:00-21:59)</p>
-                  <p class="p3">含3.5km(22:00-06:59)</p>
-                  <p class="p4">超出每<span>0.8km</span>加收<span>2</span>元，不足<span>0.8km</span>按照<span>0.8km</span>计算</p>
-                  <p class="p5">1.代驾出区外  2.区外代驾到区内</br>
+                  <p class="p2">含{{item.startkilometre}}km<span>({{item.servicetime[0]}}-{{item.servicetime[1]}})</span></p>
+                  <p class="p4">超出每<span>{{item.nextkilometre}}km</span>加收<span>{{item.nextprice}}</span>元，不足<span>{{item.nextkilometre}}km</span>按照<span>{{item.nextkilometre}}km</span>计算</p>
+                  <div class="price4">
+                    <p class="p7">等待时间：</p>
+                    <p class="p8">{{item.waittime}}分钟免费，超过{{item.nextwaittime}}分钟{{item.addwaittime}}元不满{{item.nextwaittime}}分钟按{{item.nextwaittime}}分钟计算</p>
+                  </div>
+              </div>
+              <div class="noPrice" v-show="nopriceShow">抱歉，该区域暂未开放。</div>
+              <div class="price3" v-show="priceShow">
+                <p class="p5">1.代驾出区外  2.区外代驾到区内</br>
                   3.区外代驾区外超过6公里，系统自动增收20％的返程费。</p>
                   <p class="p6">（起点或目的地在区外，超过6公里才收取）</p>
               </div>
-              <div class="price3">
-                <p class="p7">等待时间：</p>
-                <p class="p8">10分钟免费，超过1分钟1元不满1分钟按1分钟计算</p>
               </div>
             </div>
           </div>
@@ -52,49 +57,71 @@ export default {
     name:'index',
     data() {
       return {
-        value: ['1','11','111'],
-        options: [{
-          value: '1',
-          label: '福建',
-          children: [{
-            value: '11',
-            label: '厦门市',
-            children:[{
-              value: '111',
-              label: '思明区',
-              },
-              {
-              value: '222',
-              label: '湖里区',
-              },
-            ]
-          },{
-            value: '泉州市',
-            label: '泉州市',
-          },
-          ]
-        },{
-          value: '1',
-          label: '广州',
-          children: [{
-            value: '深圳',
-            label: '深圳'
-          }]
-        }],
+        value: ['35','3502','350203'],
+        data: [],
         cityVal:'',
         bgShow:false,
+        regId:'',
+        cityLaber:'',
+        regName:'厦门市思明区',
+        loading:true,
+        priceList:'',
+        priceShow:true,
+        nopriceShow:false
       };
     },
     methods: {
       handleChange(value) {
+         this.regName = this.$refs.myCascader.getCheckedNodes()[0].pathLabels[1] + this.$refs.myCascader.getCheckedNodes()[0].pathLabels[2];
+         console.log(this.regName)
+         console.log(value)
+         this.regId = value [2];
+         this.$axios.get('http://api.bzffs.cc/api/wechat/company/charge_standard',{
+           id:this.regId
+         })
+         .then((res) =>{
+           this.loading = true
+           if(res.code == 200){
+             this.loading = false
+             this.priceShow = true
+             this.nopriceShow = false
+           }
+           if(res.code == 422){
+              this.loading = false
+              this.priceShow = false
+              this.nopriceShow = true
+           }
+         })
       },
       choiceCity(){
         $('.el-input').click();
         this.cityVal = $('.el-input__inner').val();
+      },
+      getCity(){
+        this.$axios.get('http://api.bzffs.cc/api/wechat/region/list').then((res) =>{
+          console.log(res.data)
+          this.data = res.data
+
+        })
+      },
+      getPrice(){
+        this.$axios.get('http://api.bzffs.cc/api/wechat/company/charge_standard',{
+           id:350203
+         })
+         .then((res) =>{
+           this.loading =false;
+           if(res.code == 200){
+             console.log(res.data.chargeStandard[0].standard);
+             console.log(res);
+             this.priceList = res.data.chargeStandard[0].standard;
+             this.loading =false;
+           }
+        })
       }
     },
     mounted(){
- 
+      this.getCity();
+      this.getPrice();
     }
   };
 </script>
@@ -149,14 +176,20 @@ export default {
         }
       }
     }
+    .noPrice{
+      height:100px;
+      font-size: 24px;
+    }
     .price{
       margin:20px auto;
-      margin-left: -10px;
       padding:37px;
-      height:860px;
-      background-image: url('../../img/address-bg1.png');
+      overflow: hidden;
+      height:auto;
+      // background-image: url('../../img/address-bg1.png');
+      box-shadow: 0px 3px 15px rgba(0,0,0,.1);
       background-size: 700px 860px;
       background-repeat: no-repeat;
+      border-radius: 15px;
       .price1{
         height: 125px;
         border-bottom:1px solid #d5d5d5;
@@ -174,8 +207,14 @@ export default {
           font-weight: 700;
         }
       }
+      .price4{
+        display: flex;
+        flex-direction: column;
+        margin-top: 30px;
+      }
       .price2{
-        height:543px;
+        height:490px;
+        border-bottom: 1px solid #d5d5d5;
         display: flex;
         flex-direction: column;
         .p_box{
@@ -219,7 +258,7 @@ export default {
         }
         .p4{
           margin-top: 20px;
-          font-size: 1.3rem;
+          font-size: 1.2rem;
           span{
             color:#f34845;
           }
@@ -232,20 +271,46 @@ export default {
           margin-top: 20px;
           font-size: 1.1rem;
         }
-      }
-      .price3{
-        display: flex;
-        flex-direction: row;
-        margin-top: 20px;
         .p7{
-          width:40%;
-          text-align: right;
           font-size:1.3rem;
         }
         .p8{
-          width:60%;
           font-size:1.2rem;
-          text-align: left;
+        }
+      }
+      .price3{
+        display: flex;
+        flex-direction: column;
+        padding-top: 20px;
+        border-top:1px dotted #d5d5d5;
+        position: relative;
+        &::before{
+          content:'';
+          left: -65px;
+          top: -25px;
+          width:50px;
+          height:50px;
+          background-color: #FFDB29;
+          border-radius: 100%;
+          position: absolute;
+        }
+         &::after{
+          content:'';
+          right: -65px;
+          top: -25px;
+          width:50px;
+          height:50px;
+          background-color: #FFDB29;
+          border-radius: 100%;
+          position: absolute;
+        }
+        .p5{
+          margin:30px auto 0px;
+          font-size: 1.2rem;
+        }
+        .p6{
+          margin-top: 20px;
+          font-size: 1.2rem;
         }
       }
     }

@@ -52,7 +52,7 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-          alert("提交成功");
+          console.log(this.ruleForm);
         } else {
           console.log("提交失败");
           return false;

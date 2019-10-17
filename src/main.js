@@ -26,7 +26,6 @@ Vue.use(VueLazyload, {
 })
 Vue.prototype.$axios = axios;
 Vue.use(animated)
-
 /* eslint-disable no-new */
 new Vue({
   el: '#app',

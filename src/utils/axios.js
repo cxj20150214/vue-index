@@ -6,10 +6,12 @@ import store from '../store/store'
 axios.defaults.withCredentials=false;
 // axios初始化：延迟时间，主路由地址
 let instance = axios.create({
-  baseURL: 'http://dev-api.bzffs.cc',
+  baseURL: '',
   timeout: 10000,
+  headers: {'x-service-id': '1'}
 });
- 
+// 设置请求头
+
 // 设置拦截器
 axios.interceptors.request.use(
   config => {

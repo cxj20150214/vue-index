@@ -17,7 +17,7 @@
         <div class="box_3">
           <p>厦门市软件园二期</p>
           <div class="link">
-          <router-link to="/evaluate">评价</router-link>
+            <router-link to="/evaluate">评价</router-link>
           </div>
         </div>
       </div>
@@ -25,7 +25,6 @@
   </div>
 </template>
 <script>
-
 export default {
   mounted() {
     this.init();
@@ -37,28 +36,28 @@ export default {
         markers: [
           {
             lng: 108.964001,
-            nodeMapType: 9, 
-            lat: 34.216434, 
+            nodeMapType: 9,
+            lat: 34.216434
           },
           {
             lng: 109.08465929,
             nodeId: 755380,
-            lat: 34.38123567,
+            lat: 34.38123567
           },
           {
             lng: 116.54498265,
             nodeMapType: 2,
-            lat: 39.7201,
+            lat: 39.7201
           },
           {
             lng: 116.463699,
             nodeMapType: 4,
-            lat: 39.79755,
+            lat: 39.79755
           },
           {
             lng: 116.506186,
             nodeMapType: 8,
-            lat: 39.792657,
+            lat: 39.792657
           }
         ],
 
@@ -76,7 +75,7 @@ export default {
         ]
       },
       markersNew: [], //markers 经纬度点的集合
-      pathNew:[],//新的轨迹集合
+      pathNew: [] //新的轨迹集合
     };
   },
   methods: {
@@ -92,9 +91,9 @@ export default {
       this.map = map;
       this.getMarker(this.resData.markers);
       this.getPloyLine(this.resData.path);
-      
     },
-    getMarker(markers) {//画marker
+    getMarker(markers) {
+      //画marker
       let { map } = this;
       let markersNew = [];
       markers.map((item, index) => {
@@ -122,7 +121,7 @@ export default {
       });
       this.pathNew = pathNew;
       this.getBounds(pathNew);
-      this.addArrowMarkers(polyline)
+      this.addArrowMarkers(polyline);
       // this.getMarker(pathNew);
     },
     getBounds(pathNew) {
@@ -242,7 +241,7 @@ export default {
             )
           );
           break;
-        case 'arrow':
+        case "arrow":
           marker.setIcon(
             new qq.maps.MarkerImage(
               "https://m.360buyimg.com/marketingminiapp/jfs/t1/40149/9/3953/377/5cc6ccd8E67283281/3c40b6c42b49c086.png",
@@ -263,59 +262,64 @@ export default {
       var defaultOps = {
         map: this.map, //mapInstance为对应的qq map实例
         position,
-        visible: true,
+        visible: true
       };
       var options = Object.assign({}, defaultOps, opts || {});
       var marker = new qq.maps.Marker(options);
-      this.getImg('arrow', marker);
+      this.getImg("arrow", marker);
       return marker;
     },
-    computeRotaion(heading){ 
-    let rotation;
-      if(0<heading <=90) {
+    computeRotaion(heading) {
+      let rotation;
+      if (0 < heading <= 90) {
         rotation = 270 + heading;
-      }
-      else if(90<heading <=180){
+      } else if (90 < heading <= 180) {
         rotation = heading - 90;
-      }else if(-90<heading <=0){
+      } else if (-90 < heading <= 0) {
         rotation = 90 - heading;
-      }else if(-180<heading <=-90){
+      } else if (-180 < heading <= -90) {
         rotation = 270 + heading;
       }
-      return rotation
+      return rotation;
     },
-    addArrowMarkers(polyline){//添加方向marker
+    addArrowMarkers(polyline) {
+      //添加方向marker
       var defaultOps = {
-        cursor: 'normal',
+        cursor: "normal",
         zIndex: polyline.getZIndex() + 1,
         clickable: false,
         draggable: false
       };
 
-      var linePoint = polyline.getPath();//线的经纬度坐标
-      var arrowCount= linePoint.length;
-      for(let i = 1; i < arrowCount; i++){//不是每两个点之间都画箭头，而是每隔一个间隔画一个箭头
-        let pixelStart = linePoint.getAt(i-1); 
+      var linePoint = polyline.getPath(); //线的经纬度坐标
+      var arrowCount = linePoint.length;
+      for (let i = 1; i < arrowCount; i++) {
+        //不是每两个点之间都画箭头，而是每隔一个间隔画一个箭头
+        let pixelStart = linePoint.getAt(i - 1);
         let pixelEnd = linePoint.getAt(i);
         let heading, rotation, arrowLatLng, marker;
         let spherical = qq.maps.geometry.spherical;
         let distance = spherical.computeDistanceBetween(pixelStart, pixelEnd); //计算两经纬度坐标件的距离
 
-        if(distance <= 15) {//距离太近小于15m的两经纬度坐标点间不画方向
+        if (distance <= 15) {
+          //距离太近小于15m的两经纬度坐标点间不画方向
           continue;
         }
         // 返回从一个坐标到另一个坐标的航向。航向是指从一个坐标指向另一个坐标的向量与正北方向的夹角，范围为[-180,180)。
-        heading = spherical.computeHeading(pixelStart, pixelEnd);//两经纬度坐标点之间的航向
-        console.log('heading',heading)
-        arrowLatLng = spherical.computeOffsetOrigin(pixelEnd, distance/2, heading);//通过终点坐标、距离以及航向算出起始点坐标。
+        heading = spherical.computeHeading(pixelStart, pixelEnd); //两经纬度坐标点之间的航向
+        console.log("heading", heading);
+        arrowLatLng = spherical.computeOffsetOrigin(
+          pixelEnd,
+          distance / 2,
+          heading
+        ); //通过终点坐标、距离以及航向算出起始点坐标。
 
         marker = this.addMarkers(arrowLatLng.lat, arrowLatLng.lng, defaultOps);
         rotation = this.computeRotaion(heading); //由两坐标点之间的航向计算marker要旋转的角度
-        console.log('rotation',rotation)
-        marker.setRotation(rotation);//设置marker角度  rotation属性取值范围0-360,支持IE9及以上版本
-        
+        console.log("rotation", rotation);
+        marker.setRotation(rotation); //设置marker角度  rotation属性取值范围0-360,支持IE9及以上版本
       }
-    },
+    }
   }
 };
 </script>
