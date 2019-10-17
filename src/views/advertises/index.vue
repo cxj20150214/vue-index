@@ -51,10 +51,6 @@
        </div>
     </div>
   <div class="adv_5" @click="toadv4()"><a href="javascript:;">立即报名</a></div>
-
-
-    
-<div style="margin-bottom: 30rem;"></div>
   </div>
 </template>
 <script>
@@ -120,9 +116,10 @@ export default {
   padding: 2.05rem 1.667rem;/* 37px  30px*/
   font-size: .8rem;/* 14px  */
   text-align: left;
+  margin-bottom: 80px;
   }
 .adv_ti{
-  font-size: 1rem;
+  font-size: 1.2rem;
   background: url(../../img/hsfimg9.png);
   background-repeat: no-repeat;
   height: calc(0.1583 * (100vw - 6.01rem));
@@ -149,6 +146,7 @@ export default {
   position: relative;
   margin-top: 2.5rem;
   margin-bottom: 2.5rem;
+  font-size: 24px;
 }
 .adv_2_ti{
   color: #333;
@@ -224,6 +222,7 @@ export default {
 }
 .adv_4{
   color: #666;
+  font-size: 24px;
   label{
     color: #333;
   }

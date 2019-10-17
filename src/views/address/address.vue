@@ -27,12 +27,9 @@
                  </div>
               </div>
               <div class="price2" v-for="item in priceList" v-show="priceShow">
-                  <div class="p_box">
-                    <img class="dbx" src="../../img/dbx1 (1).png" alt="">
-                    <p class="p1">微信叫代驾只需<span>{{item.startprice}}</span>元</p>
-                    <img class="dbx1" src="../../img/dbx1 (2).png" alt="">
-                  </div>
+               
                   <p class="p2">含{{item.startkilometre}}km<span>({{item.servicetime[0]}}-{{item.servicetime[1]}})</span></p>
+                  <p class="p1">微信叫代驾只需<span>{{item.startprice}}</span>元</p>
                   <p class="p4">超出每<span>{{item.nextkilometre}}km</span>加收<span>{{item.nextprice}}</span>元，不足<span>{{item.nextkilometre}}km</span>按照<span>{{item.nextkilometre}}km</span>计算</p>
                   <div class="price4">
                     <p class="p7">等待时间：</p>
@@ -41,9 +38,7 @@
               </div>
               <div class="noPrice" v-show="nopriceShow">抱歉，该区域暂未开放。</div>
               <div class="price3" v-show="priceShow">
-                <p class="p5">1.代驾出区外  2.区外代驾到区内</br>
-                  3.区外代驾区外超过6公里，系统自动增收20％的返程费。</p>
-                  <p class="p6">（起点或目的地在区外，超过6公里才收取）</p>
+               {{remarks}}
               </div>
               </div>
             </div>
@@ -67,14 +62,14 @@ export default {
         loading:true,
         priceList:'',
         priceShow:true,
-        nopriceShow:false
+        nopriceShow:false,
+        remarks:'',
+
       };
     },
     methods: {
       handleChange(value) {
          this.regName = this.$refs.myCascader.getCheckedNodes()[0].pathLabels[1] + this.$refs.myCascader.getCheckedNodes()[0].pathLabels[2];
-         console.log(this.regName)
-         console.log(value)
          this.regId = value [2];
          this.$axios.get('http://api.bzffs.cc/api/wechat/company/charge_standard',{
            id:this.regId
@@ -85,6 +80,8 @@ export default {
              this.loading = false
              this.priceShow = true
              this.nopriceShow = false
+             this.priceList = res.data.chargeStandard[0].standard
+             this.remarks = res.data.chargeStandard[0].remark;
            }
            if(res.code == 422){
               this.loading = false
@@ -99,7 +96,6 @@ export default {
       },
       getCity(){
         this.$axios.get('http://api.bzffs.cc/api/wechat/region/list').then((res) =>{
-          console.log(res.data)
           this.data = res.data
 
         })
@@ -111,8 +107,7 @@ export default {
          .then((res) =>{
            this.loading =false;
            if(res.code == 200){
-             console.log(res.data.chargeStandard[0].standard);
-             console.log(res);
+             this.remarks = res.data.chargeStandard[0].remark;
              this.priceList = res.data.chargeStandard[0].standard;
              this.loading =false;
            }
@@ -177,8 +172,10 @@ export default {
       }
     }
     .noPrice{
-      height:100px;
+      height:300px;
       font-size: 24px;
+      border-radius: 15px;
+      line-height: 300px;
     }
     .price{
       margin:20px auto;
@@ -213,7 +210,7 @@ export default {
         margin-top: 30px;
       }
       .price2{
-        height:490px;
+        height:400px;
         border-bottom: 1px solid #d5d5d5;
         display: flex;
         flex-direction: column;
@@ -238,10 +235,11 @@ export default {
           margin-top: 20px;
         }
         .p1{
-          font-size: 1.8rem;
+          font-size: 1.2rem;
           line-height: -20px;
+          margin-top: 20px;
           span{
-            font-size: 2.5rem;
+            font-size: 1.2rem;
             color:#f34845;
           }
         }
@@ -284,6 +282,7 @@ export default {
         padding-top: 20px;
         border-top:1px dotted #d5d5d5;
         position: relative;
+        font-size: 24px;
         &::before{
           content:'';
           left: -65px;
