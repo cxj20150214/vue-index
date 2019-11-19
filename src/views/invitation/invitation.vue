@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class="bg">
+        <div class="bg_invitation">
           <img class="dibu" src="../../img/yaoqin_bg1.png" alt="">
           <img class="title" src="../../img/yaoqin_bg2.png" alt="">
           <div class="content">
@@ -22,28 +22,42 @@ export default {
   },
     data() {
       return {
+        openid:this.$store.state.openid,
+        // openid:"oNrsY1nhE5kjM4DTHPl3IYGpDrIw",
         ruleForm: {
           yaoqin: '',
         },
         rules: {
           yaoqin: [
             { required: true, message: '请输入邀请码', trigger: 'blur' },
-            { min: 3, max: 50, message: '长度在 3 到 50 个字符', trigger: 'blur' }
+            { min: 1, max: 8, message: '长度在 3 到 50 个字符', trigger: 'blur' }
           ]
         }
       };
    },
   methods:{
-    getHeight(){
-      $(document).ready(function(){
-         var windowHeight = $(window).height()
-         $('.bg').css('height',windowHeight)
-      })
-    },
+    // getHeight(){
+    //   $(document).ready(function(){
+    //      var windowHeight = $(window).height()
+    //      $('.bg_invitation').css('height',windowHeight)
+    //   })
+    // },
     submitForm(ruleForm) {
         this.$refs[ruleForm].validate((valid) => {
           if (valid) {
-            alert('绑定成功!');
+            this.$axios.post("/api/shop/bind",{
+              openid:this.openid,
+              bind_code:this.ruleForm.yaoqin
+            })
+            .then(res=>{
+              if(res.code == 200){
+                // alert(res.message)
+                this.$router.go(-1);
+              }
+              if(res.code == 422){
+                alert(res.message)
+              }
+            })
           } else {
             console.log('绑定失败!!');
             return false;
@@ -52,13 +66,14 @@ export default {
     },
   },
   mounted(){
-   this.getHeight()
+  //  this.getHeight()
   }
 }
 </script>
 <style lang="less" scoped>
-  .bg{
+  .bg_invitation{
     width:750px;
+    height: 100vh;
     margin:0px auto;
     position: relative;
     background-image: url('../../img/yaoqin_bg.jpg');
@@ -93,21 +108,19 @@ export default {
     width:330px;
   }
   @media screen and (max-width: 750px) {
-    .bg{
+    .bg_invitation{
       width:100%;
     }
   }
    @media screen and (min-width: 750px) {
-    .bg{
-      height:1200px!important;
-    }
    
   }
 </style>
-<style lang="">
-    .el-input__inner{
+<style lang="less">
+.yaoqinForm {
+   .el-input__inner{
       border:0px;
-      font-size: 1.4rem;
+      font-size: 36px;
       height: 50px;
       line-height: 50px;
   }
@@ -119,4 +132,6 @@ export default {
         padding: 25px 20px;
         opacity: 0;
   }
+}
+   
 </style>

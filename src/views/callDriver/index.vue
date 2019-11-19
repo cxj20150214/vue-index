@@ -3,8 +3,7 @@
     <div class="callbox">
       <div class="callbox_txt">
         <p class="tit">
-          当前您附近有超过
-          <span>15</span>位司机
+        当前您附近有超过<span>{{driverNumber}}</span>位司机
         </p>
         <p class="tit1">为您服务</p>
       </div>
@@ -13,25 +12,18 @@
         <div class="tit">
           <div class="chufadi">
             <i class="iconfont icon-dingwei icon1"></i>
-            <p class="txt">选择出发地</p>
+            <p class="txt_call">选择出发地</p>
           </div>
-          <p class="address">
-            福建省厦门市思明区体育中心
+          <p class="address" @click="maplink">
+            {{thisAddress}}
             <span>></span>
           </p>
         </div>
       </div>
-      <p class="qibu">18元起步，查看服务价格和接单范围</p>
+      <p class="qibu"><router-link to="/address">点击查看地区服务价格</router-link></p>
       <el-button
         type="danger"
         class="button_hujiao"
-        v-if="dialoglogin ==false"
-        @click="dialogFormVisible = true"
-      >呼叫司机</el-button>
-      <el-button
-        type="danger"
-        class="button_hujiao"
-        v-if="dialoglogin ==true"
         @click="callDriver()"
       >呼叫司机</el-button>
     </div>
@@ -45,10 +37,10 @@
           class="RegisterForm"
         >
           <el-form-item prop="phone">
-            <el-input v-model="Register.phone" placeholder="请输入11位手机号码" class="v_phone"></el-input>
+            <el-input type="number" v-model="Register.phone" placeholder="请输入11位手机号码" class="v_phone"></el-input>
           </el-form-item>
           <el-form-item prop="sendcode" class="code">
-            <el-input v-model="Register.sendcode" placeholder="请输入验证码" class="v_phone"></el-input>
+            <el-input  type="number" v-model="Register.sendcode" placeholder="请输入验证码" class="v_phone"></el-input>
             <el-button
               type="button"
               @click="sendcode"
@@ -78,10 +70,24 @@
 <script>
 export default {
   name: "callDriver",
+  inject: ['reload'],
   data() {
     return {
+      thisAddress:'',
+      order_id:'',
+      extension_shop:'0',
+      province:'',
+      openid:'',
+      city:'',
+      district:'',
+      addr:'',
+      driverNumber:'',
+      order_address:'',
+      order_lng :'',
+      order_lat :'',
+      access_token:'',
+      platform:'official_accounts',
       dialogFormVisible: false,
-      dialoglogin: false,
       Register: {
         phone: "",
         sendcode: ""
@@ -98,7 +104,41 @@ export default {
     };
   },
   methods: {
-    //手机验证发送验证码
+    NearbyDriver(){
+      this.$axios.get('/api/driver/lists',{
+        order_lng:this.order_lng,
+        order_lat :this.order_lat
+    })
+      .then(res=>{
+        console.log(res)
+        this.driverNumber = res.data.total
+      })
+    },
+    maplink(){
+      let thisUrl = encodeURIComponent(window.location.href);
+      window.location.href =`https://apis.map.qq.com/tools/locpicker?search=1&type=0&backurl=${thisUrl}&key=CCHBZ-QHXK5-4VKIO-QYX6L-ODEHV-EZBXB&referer=洪师傅-h5`
+    },
+    getMyLocation() {
+                var geolocation = new qq.maps.Geolocation("CCHBZ-QHXK5-4VKIO-QYX6L-ODEHV-EZBXB", "洪师傅-h5");
+                geolocation.getIpLocation(this.showPosition, this.showErr);
+                //geolocation.getLocation(this.showPosition, this.showErr);//或者用getLocation精确度比较高
+            },
+            showPosition(position) {
+                console.log(position);
+                this.order_lat = position.lat;
+                this.order_lng = position.lng;
+                this.city = position.city;
+                this.province = position.province;
+                this.addr = position.addr;
+                this.thisAddress = position.province + position.city + position.addr;
+                this.NearbyDriver();
+            },
+            showErr() {
+                console.log("定位失败");
+                // this.getMyLocation();//定位失败再请求定位，测试使用
+                
+            },
+   //手机验证发送验证码
     sendcode() {
       const reg = 11 && /^((13|14|15|17|18)[0-9]{1}\d{8})$/;
       if (this.Register.phone == "") {
@@ -111,6 +151,12 @@ export default {
       } else {
         console.log(this.Register.phone);
         alert("发送成功");
+        this.$axios.post('/api/sms/send',{
+          mobile:this.Register.phone,
+          type:'login'
+        }).then(res=>{
+
+        })
         this.time = 60;
         this.disabled = true;
         this.timer();
@@ -131,8 +177,20 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-          alert("注册成功");
-          this.dialoglogin = true;
+          this.$axios.post('/api/auth/login',{
+            mobile:this.Register.phone,
+            smsvcode :this.Register.sendcode,
+            platform:'official_accounts',
+            openid :this.openid
+          }).then(res=>{
+            console.log(res.data)
+              if(res.code == 200){
+                this.access_token = res.data.access_token
+                let data = res.data;
+                this.$store.commit('set_token', 'bearer ' + data.access_token);
+                
+              }
+          })
         } else {
           alert("请填写完整");
           this.dialogFormVisible = true;
@@ -141,12 +199,137 @@ export default {
       });
     },
     callDriver() {
-      alert("呼叫成功");
+      this.extension_shop = this.$route.query.extension_shop;
+      this.$axios.post('/api/order/pagesave',{
+            order_address :this.thisAddress,
+            order_lng :this.order_lng ,
+            order_lat :this.order_lat ,
+            extension_shop:this.extension_shop,
+            token:this.access_token
+          }).then(res =>{
+            console.log(res.data)
+            if(res.code == 200){
+              console.log(res.data.order_id)
+              this.order_id = res.data.order_id
+              alert('预约成功')
+              this.$router.push({
+                path: 'trip', 
+                query: {
+                  order_id: this.order_id
+                }
+              })
+            }
+            if(res.code == 401){
+              this.dialogFormVisible =true
+            }
+            if(res.code ==422){
+              alert(res.message);
+            }
+      })
+    },
+     getCodeApi(state) {
+      //获取code
+      let urlNow = encodeURIComponent(window.location.href);
+      let scope = "snsapi_userinfo"; //snsapi_userinfo   //静默授权 用户无感知
+      let appid = "wx8db3af77b48702ea";
+      let url = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${appid}&redirect_uri=${urlNow}&response_type=code&scope=${scope}&state=${state}#wechat_redirect`;
+      window.location.replace(url);
+    },
+    getUrlKey(name){//获取url 参数
+         return decodeURIComponent((new RegExp('[?|&]'+name+'='+'([^&;]+?)(&|#|;|$)').exec(location.href)||[,""])[1].replace(/\+/g,'%20'))||null;
+    },
+    getOrder(){
+      this.$axios.post('/api/auth/quick_login',{
+        platform:this.platform,
+        openid:this.openid,
+      }).then(res =>{
+        console.log(res)
+        if(res.code == 200){
+          this.access_token = res.data.access_token
+          let data = res.data;
+          this.$store.commit('set_token', 'bearer ' + data.access_token);
+          this.$router.go(0);
+        }
+        if(res.code ==422){
+          this.dialogFormVisible =true
+        }
+      })
+    }
+  },
+  mounted(){
+    // this.getMyLocation();
+    // this.NearbyDriver();
+  },
+   created() {
+    //  地图选点
+     var thisUrl = this.$route.fullPath
+     console.log(decodeURIComponent(thisUrl))
+     if(thisUrl.indexOf("addr") != -1){
+       var thisAddress = this.$route.query.addr
+       var isArr = Array.isArray(thisAddress)
+       console.log(thisAddress)
+       console.log(isArr);
+       if(!isArr){
+         this.thisAddress = thisAddress
+       }
+       if(isArr){
+         let address = thisAddress[thisAddress.length-1];
+         this.thisAddress = address
+       }
+    }
+    if(thisUrl.indexOf("latng") != -1){
+      var latngArr = this.$route.query.latng
+      var isArr = Array.isArray(latngArr)
+      console.log(isArr);
+      if(!isArr){
+        let lat = latngArr.match(/(\S*),/)[0]
+        let lat1 =lat.substring(0,lat.length-1)
+        let lan = latngArr.match(/,(\S*)/)[1]
+        console.log(lat1)
+        console.log(lan)
+        this.order_lng = lan
+        this.order_lat = lat1
+        this.NearbyDriver();
+      }
+      if(isArr){
+        var thisLatng = this.$route.query.latng
+        let Latng = thisLatng[thisLatng.length-1]
+        let lat = Latng.match(/(\S*),/)[0]
+        let lat1 =lat.substring(0,lat.length-1)
+        let lan = Latng.match(/,(\S*)/)[1]
+        console.log(lat1)
+        console.log(lan)
+        this.order_lng = lan
+        this.order_lat = lat1
+        this.NearbyDriver();
+      }
+    }
+    if(thisUrl.indexOf("module") == -1){
+      console.log('没用地图选点')
+      this.getMyLocation();
+    }
+    //授权
+    let code = this.getUrlKey("code");
+    if (code) {
+      this.$axios.post("/api/auth/wechatinfo?code=" + code).then(res => {
+          console.log(res);
+          if(res.code == 200){
+            console.log(res.data.original.openid)
+            this.openid = res.data.original.openid;
+            this.$store.commit('set_openid',res.data.original.openid);
+            this.getOrder();
+          }
+        });
+    } else {
+      this.getCodeApi("123");
     }
   }
 };
 </script>
 <style lang="less" scoped>
+.qibu a{
+  color:#999;
+}
 .callbox {
   display: flex;
   flex-direction: column;
@@ -229,7 +412,7 @@ export default {
       font-size: 36px;
       color: #ff596a;
     }
-    .txt {
+    .txt_call {
       float: left;
       margin-left: 30px;
     }
@@ -305,14 +488,22 @@ export default {
     }
   }
 }
+.el-button{
+  opacity: 1;
+}
 </style>
 <style lang="less">
+.el-button--danger:focus, .el-button--danger:hover{
+    background: #999999!important;
+    border-color: #999999!important;
+    box-shadow: 0px 10px 15px rgba(0,0,0,.2);
+}
 .v_phone {
   margin-bottom: 15px;
 }
 .v_phone .el-input__inner {
   border: 0px;
-  font-size: 28px;
+  font-size: 32px;
   border-bottom: 1px solid #d5d5d5;
   height: 60px;
   line-height: 60px;

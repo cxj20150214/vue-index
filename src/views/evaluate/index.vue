@@ -3,23 +3,21 @@
     <div class="evaluate">
       <div class="eva_box">
         <p class="title">您对本次洪师傅代驾服务师傅满意？</p>
-        <el-form :model="ruleForm" ref="ruleForm" label-width="100px" class="demo-ruleForm">
+        <el-form
+          :model="ruleForm"
+          ref="ruleForm"
+          label-width="100px"
+          class="demo-ruleForm eva_form"
+        >
           <div class="block">
             <el-rate v-model="ruleForm.value1" :colors="colors" show-text></el-rate>
           </div>
           <el-input v-model="ruleForm.value1" type="hidden"></el-input>
-          <div class="biaoqian">
-            <el-checkbox-group v-model="ruleForm.type" class="biaoqian_box">
-              <el-checkbox label="态度良好" name="type"></el-checkbox>
-              <el-checkbox label="行驶安全" name="type"></el-checkbox>
-              <el-checkbox label="说话有礼貌" name="type"></el-checkbox>
-              <el-checkbox label="行进路程快" name="type"></el-checkbox>
-              <el-checkbox label="干净" name="type"></el-checkbox>
-              <el-checkbox label="车子好" name="type"></el-checkbox>
-              <el-checkbox label="服务态度好" name="type"></el-checkbox>
-              <el-checkbox label="有按时完成服务标准" name="type"></el-checkbox>
+           <div class="biaoqian">
+            <el-checkbox-group class="biaoqian_box" v-model="ruleForm.itemsstring">
+              <el-checkbox :label="item.key"  :key="item.key" v-for="item in ruleForm.type"></el-checkbox>
             </el-checkbox-group>
-          </div>
+          </div>         
           <el-input
             class="textarea_box"
             type="textarea"
@@ -40,11 +38,13 @@ export default {
   data() {
     return {
       colors: ["#99A9BF", "#F7BA2A", "#FF9900"],
+      sid:'',
       ruleForm: {
         value1: 4,
-        type: ['态度良好','干净'],
+        type: ["态度良好", "干净"],
         desc: "不错,非常好的一次代驾体验",
-        checked: false
+        checked: false,
+        itemsstring:[]
       }
     };
   },
@@ -52,17 +52,43 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-          console.log(this.ruleForm);
+            this.$axios.post('/api/order/evaluate',{
+              id:this.sid,
+              // id:'201910121658196504',
+              star:this.ruleForm.value1,
+              evaluate_item:this.ruleForm.itemsstring.join(','),
+              evaluate_reason:this.ruleForm.desc
+            }).then(res=>{
+              if(res.data.code == 200){
+                alert("提交成功！")
+              }else{
+                alert(res.message)
+              }
+            })
         } else {
-          console.log("提交失败");
           return false;
         }
       });
     }
-  }
+  },
+  created() {
+      this.sid=this.$route.query.order_id;
+      this.$axios.get("/api/parameter/item", {pid: 'ORDER_EVALUATE'}).then(res=>{
+           if (res.code == 200) {
+                this.ruleForm.type=res.data
+                console.log(this.ruleForm.type)
+           }else{
+
+           }
+        })
+    }
+
 };
 </script>
 <style lang="less" scoped>
+.eva_form{
+  margin-bottom: 60px;
+}
 .evaluate {
   width: 100%;
   height: 100vh;
@@ -100,7 +126,8 @@ export default {
     }
     .biaoqian {
       width: 100%;
-      height: 300px;
+      height: auto;
+      display: flex;
       background-color: #f4f4f4;
       border-radius: 15px;
       position: relative;
@@ -128,16 +155,83 @@ export default {
 }
 </style>
 <style lang="less">
-.el-rate__icon {
-  font-size: 48px;
-  margin-right: 12px;
-}
-.el-rate {
-  height: 50px;
-}
-.el-rate__text {
-  font-size: 24px;
-  margin-left: 15px;
+.eva_form {
+  .sub_button {
+    width: 100%;
+    margin-top: 150px;
+    height: 90px;
+    font-size: 28px;
+  }
+  .el-button {
+    opacity: 1;
+  }
+  .el-rate__icon {
+    font-size: 48px;
+    margin-right: 12px;
+  }
+  .el-rate {
+    height: 50px;
+  }
+  .el-rate__text {
+    font-size: 24px;
+    margin-left: 15px;
+  }
+  .el-textarea__inner {
+    border: 1px solid #d5d5d5;
+    padding: 20px;
+    font-size: 28px;
+  }
+  .el-checkbox__label {
+    font-size: 24px;
+  }
+  .el-checkbox__inner {
+    width: 20px;
+    height: 20px;
+  }
+  .el-checkbox__input {
+    margin-top: -5px;
+  }
+  .el-checkbox__input.is-checked + .el-checkbox__label {
+    color: #ff596a;
+  }
+  .el-checkbox__input.is-checked .el-checkbox__inner,
+  .el-checkbox__input.is-indeterminate .el-checkbox__inner {
+    background-color: #ff596a;
+    border-color: #ff596a;
+  }
+  .el-checkbox__inner::after {
+    -webkit-box-sizing: content-box;
+    box-sizing: content-box;
+    content: "";
+    border: 2px solid #fff;
+    border-left: 0;
+    border-top: 0;
+    height: 10px;
+    left: 7px;
+    position: absolute;
+    top: 2px;
+    -webkit-transform: rotate(45deg) scaleY(0);
+    transform: rotate(45deg) scaleY(0);
+    width: 3px;
+    -webkit-transition: -webkit-transform 0.15s ease-in 0.05s;
+    transition: -webkit-transform 0.15s ease-in 0.05s;
+    transition: transform 0.15s ease-in 0.05s;
+    transition: transform 0.15s ease-in 0.05s,
+      -webkit-transform 0.15s ease-in 0.05s;
+    transition: transform 0.15s ease-in 0.05s,
+      -webkit-transform 0.15s ease-in 0.05s;
+    -webkit-transform-origin: center;
+    transform-origin: center;
+  }
+  .el-button--primary {
+    background-color: #ff596a;
+    border-color: #ff596a;
+  }
+  .el-button--primary:focus,
+  .el-button--primary:hover {
+    background-color: #ff596a;
+    border-color: #ff596a;
+  }
 }
 .biaoqian {
   .el-checkbox__label {
@@ -159,70 +253,9 @@ export default {
     color: #ff596a;
   }
 }
-.el-textarea__inner {
-  border: 1px solid #d5d5d5;
-  padding: 20px;
-  font-size: 28px;
-}
-.el-checkbox__label {
-  font-size: 24px;
-}
-.el-checkbox__inner {
-  width: 20px;
-  height: 20px;
-}
+
 .unName {
   float: right;
   margin-top: 25px;
-}
-.el-checkbox__input {
-  margin-top: -5px;
-}
-.el-checkbox__input.is-checked + .el-checkbox__label {
-  color: #ff596a;
-}
-.el-checkbox__input.is-checked .el-checkbox__inner,
-.el-checkbox__input.is-indeterminate .el-checkbox__inner {
-  background-color: #ff596a;
-  border-color: #ff596a;
-}
-.el-checkbox__inner::after {
-  -webkit-box-sizing: content-box;
-  box-sizing: content-box;
-  content: "";
-  border: 2px solid #fff;
-  border-left: 0;
-  border-top: 0;
-  height: 10px;
-  left: 7px;
-  position: absolute;
-  top: 2px;
-  -webkit-transform: rotate(45deg) scaleY(0);
-  transform: rotate(45deg) scaleY(0);
-  width: 3px;
-  -webkit-transition: -webkit-transform 0.15s ease-in 0.05s;
-  transition: -webkit-transform 0.15s ease-in 0.05s;
-  transition: transform 0.15s ease-in 0.05s;
-  transition: transform 0.15s ease-in 0.05s,
-    -webkit-transform 0.15s ease-in 0.05s;
-  transition: transform 0.15s ease-in 0.05s,
-    -webkit-transform 0.15s ease-in 0.05s;
-  -webkit-transform-origin: center;
-  transform-origin: center;
-}
-.sub_button {
-  width: 100%;
-  margin-top: 150px;
-  height: 90px;
-  font-size: 28px;
-}
-.el-button--primary {
-  background-color: #ff596a;
-  border-color: #ff596a;
-}
-.el-button--primary:focus,
-.el-button--primary:hover {
-  background-color: #ff596a;
-  border-color: #ff596a;
 }
 </style>

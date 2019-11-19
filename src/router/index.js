@@ -2,9 +2,13 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import index from '@/views/index/index'
 import address from '@/views/address/address'
-Vue.use(Router)
+import store from '../store/store'
 
-export default new Router({
+Vue.use(Router)
+if (sessionStorage.getItem('token')) {
+  store.commit('set_token', sessionStorage.getItem('token'))
+}
+const router= new Router({
   linkActiveClass:'active',
   linkExactActiveClass:'active',
   // 跳转返回顶部
@@ -25,7 +29,9 @@ export default new Router({
       path: '/address',
       name: 'address',
       component: address,
-      meta: { title: "地区价格表" }
+      meta: {
+        title: ''
+      }
     },
     {
       path:'/advertises',name:'advertises',component:()=>import('../views/advertises/index')
@@ -55,14 +61,26 @@ export default new Router({
       component:()=>import('../views/evaluate/index')
     },
     {
-      path: '/test',
-      name: 'test',
-      component:()=>import('../views/evaluate/test')
-    },
-    {
       path: '/callDriver',
       name: 'callDriver',
       component:()=>import('../views/callDriver/index')
-    }
-  ]
+    },
+    {
+      path: '/hotline',
+      name: 'hotline',
+      component:()=>import('../views/hotline/index')
+    },
+    {
+      path:'/coupon',name:'coupon',component:()=>import('../views/coupon/index')
+    },
+  ],
 })
+// router.beforeEach((to,from,next)=>{
+//   // console.log(to);
+//   // console.log(from);
+//   if (to.meta.title) {
+//     document.title = to.meta.title
+//   }
+//   next();
+// })
+export default router;

@@ -6,18 +6,19 @@
         <div class="box_1">
           <img src="../../img/xr.png" alt />
           <p>
-            1小时30分钟
-            <span style="margin-left:15px">8.8公里</span>
-            <span class="price">¥50</span>
+            {{total_minute}}分钟
+            <span style="margin-left:15px">{{mileage}}公里</span>
+            <span class="price">¥{{money}}</span>
           </p>
         </div>
         <div class="box_2">
-          <p>厦门市体育中心</p>
+          <p>{{order_address}}</p>
         </div>
         <div class="box_3">
-          <p>厦门市软件园二期</p>
+          <p>{{order_destination_address}}</p>
           <div class="link">
-            <router-link to="/evaluate">评价</router-link>
+            <a @click="routerEvaluate()">评价</a>
+            <router-view></router-view>
           </div>
         </div>
       </div>
@@ -26,52 +27,43 @@
 </template>
 <script>
 export default {
+  name: 'trip',
   mounted() {
-    this.init();
+    // this.getTrajectory();
+    this.tracker();
   },
   data() {
     return {
+      total_minute:'',
+      order_address:'',
+      order_destination_address:'',
+      mileage:'',
+      money:'',
       map: "",
+      openid:this.$store.state.openid,
+      platform:'official_accounts',
+      access_token:'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC9hcGkuYnpmZnMuY2NcL2FwaVwvYXV0aFwvcXVpY2tfbG9naW4iLCJpYXQiOjE1NzM1Mjg4ODgsImV4cCI6MTU3NDczODQ4OCwibmJmIjoxNTczNTI4ODg4LCJqdGkiOiJxaEpCWE13eThseDFUTDNzIiwic3ViIjoyNzkwMDgsInBydiI6IjIzYmQ1Yzg5NDlmNjAwYWRiMzllNzAxYzQwMDg3MmRiN2E1OTc2ZjcifQ.xL_7eV1AFGeWDMFiRCPjQYWbkOhkzIiGvRNBcepw1aM',
+      orderId:'',
       resData: {
         markers: [
-          {
-            lng: 108.964001,
-            nodeMapType: 9,
-            lat: 34.216434
-          },
-          {
-            lng: 109.08465929,
-            nodeId: 755380,
-            lat: 34.38123567
-          },
-          {
-            lng: 116.54498265,
-            nodeMapType: 2,
-            lat: 39.7201
-          },
-          {
-            lng: 116.463699,
-            nodeMapType: 4,
-            lat: 39.79755
-          },
-          {
-            lng: 116.506186,
-            nodeMapType: 8,
-            lat: 39.792657
-          }
+          // {
+          //   lng: 118.181005,
+          //   nodeMapType: 4,
+          //   lat:  24.485391
+          // }
         ],
-
         path: [
-          { lat: 39.864809, lng: 116.377689 },
-          { lat: 39.864729, lng: 116.377749 },
-          { lat: 39.864699, lng: 116.377779 },
-          { lat: 39.864529, lng: 116.377899 },
-          { lat: 39.864349, lng: 116.378169 },
-          { lat: 39.864305, lng: 116.378234 },
-          { lat: 39.864728, lng: 116.378727 },
-          { lat: 39.864758, lng: 116.378706 },
-          { lat: 39.864758, lng: 116.378706 },
-          { lat: 39.864902, lng: 116.37893 }
+          // {lat: 39.864809, lng: 116.377689},
+          // { lat: 39.864729, lng: 116.377749 },
+          // { lat: 39.864699, lng: 116.377779 },
+          // { lat: 39.864529, lng: 116.377899 },
+          // { lat: 39.864349, lng: 116.378169 },
+          // { lat: 39.864305, lng: 116.378234 },
+          // { lat: 39.864728, lng: 116.378727 },
+          // { lat: 39.864758, lng: 116.378706 },
+          // { lat: 39.864758, lng: 116.378706 },
+          // { lat: 39.864902, lng: 116.37893 },
+         
         ]
       },
       markersNew: [], //markers 经纬度点的集合
@@ -79,6 +71,17 @@ export default {
     };
   },
   methods: {
+    routerEvaluate(){
+      let order_id  = this.$route.query.order_id;
+      let service_id  = this.$route.query.service_id;
+      this.$router.push({
+                path: 'evaluate', 
+                query: {
+                  order_id: order_id,
+                  service_id:service_id
+                  }
+     })
+    },
     init() {
       let myOptions = {
         draggable: true,
@@ -97,6 +100,7 @@ export default {
       let { map } = this;
       let markersNew = [];
       markers.map((item, index) => {
+        // console.log(item)
         markersNew.push(new qq.maps.LatLng(item.lat, item.lng));
         let marker = new qq.maps.Marker({
           position: new qq.maps.LatLng(item.lat, item.lng),
@@ -112,7 +116,7 @@ export default {
       path.map(item => {
         pathNew.push(new qq.maps.LatLng(item.lat, item.lng));
       });
-      console.log("pathNew", pathNew);
+      // console.log("pathNew", pathNew);
       let polyline = new qq.maps.Polyline({
         path: pathNew,
         strokeColor: "#F0250F",
@@ -121,13 +125,13 @@ export default {
       });
       this.pathNew = pathNew;
       this.getBounds(pathNew);
-      this.addArrowMarkers(polyline);
+      // this.addArrowMarkers(polyline);
       // this.getMarker(pathNew);
     },
     getBounds(pathNew) {
       //自适应视野
       //根据地图上的几个点 找最大最小视角
-      console.log("pathNew", pathNew);
+      // console.log("pathNew", pathNew);
       let maxPointLat = pathNew[pathNew.length - 1].lat,
         maxPointLng = pathNew[pathNew.length - 1].lng,
         minPointLat = pathNew[0].lat,
@@ -137,16 +141,16 @@ export default {
       this.map.fitBounds(new qq.maps.LatLngBounds(sw, ne));
     },
     getImg(nodeMapType, marker) {
-      console.log("nodeMapType", nodeMapType);
-      let size_recv = new qq.maps.Size(120, 48),
+      // console.log("nodeMapType", nodeMapType);
+      let size_recv = new qq.maps.Size(30, 44),
         size_dispatching = new qq.maps.Size(100, 48),
-        anchor = new qq.maps.Point(25, 25),
+        anchor = new qq.maps.Point(16, 40),
         origin = new qq.maps.Point(0, 0);
       switch (nodeMapType) {
         case 1: //收件
           marker.setIcon(
             new qq.maps.MarkerImage(
-              "https://m.360buyimg.com/marketingminiapp/jfs/t1/36809/22/7052/17174/5cc68c1eE3762584d/cf839aa4074ac94b.png",
+              "https://hsx-style.xiruiai.cn/img/43/s902t1574070291299.png",
               size_recv,
               origin,
               anchor,
@@ -156,7 +160,7 @@ export default {
         case 2: //寄件
           marker.setIcon(
             new qq.maps.MarkerImage(
-              "https://m.360buyimg.com/marketingminiapp/jfs/t1/34554/31/7112/15926/5cc68bf6Ea2ab79d4/7e7e6ef40adde335.png",
+              "https://hsx-style.xiruiai.cn/img/43/s1495t1574128055159.png",
               size_recv,
               origin,
               anchor,
@@ -178,7 +182,7 @@ export default {
         case 4: //分拣中心
           marker.setIcon(
             new qq.maps.MarkerImage(
-              "https://m.360buyimg.com/marketingminiapp/jfs/t1/42519/5/1476/16872/5cc68c4fE525a68c6/c4df52c658bfa5b8.png",
+              "https://hsx-style.xiruiai.cn/img/43/s980t1574070296819.png",
               size_recv,
               origin,
               anchor,
@@ -189,7 +193,7 @@ export default {
         case 5:
           marker.setIcon(
             new qq.maps.MarkerImage(
-              "https://m.360buyimg.com/marketingminiapp/jfs/t1/36809/22/7052/17174/5cc68c1eE3762584d/cf839aa4074ac94b.png",
+              "https://hsx-style.xiruiai.cn/img/43/s1467t1574128055167.png",
               size_recv,
               origin,
               anchor,
@@ -233,7 +237,7 @@ export default {
         case 9:
           marker.setIcon(
             new qq.maps.MarkerImage(
-              "https://m.360buyimg.com/marketingminiapp/jfs/t1/42519/5/1476/16872/5cc68c4fE525a68c6/c4df52c658bfa5b8.png",
+              "https://hsx-style.xiruiai.cn/img/43/s980t1574070296819.png",
               size_recv,
               origin,
               anchor,
@@ -257,18 +261,18 @@ export default {
     /**
      * 画箭头
      */
-    addMarkers(lat, lng, opts) {
-      var position = new qq.maps.LatLng(lat, lng);
-      var defaultOps = {
-        map: this.map, //mapInstance为对应的qq map实例
-        position,
-        visible: true
-      };
-      var options = Object.assign({}, defaultOps, opts || {});
-      var marker = new qq.maps.Marker(options);
-      this.getImg("arrow", marker);
-      return marker;
-    },
+    // addMarkers(lat, lng, opts) {
+    //   var position = new qq.maps.LatLng(lat, lng);
+    //   var defaultOps = {
+    //     map: this.map, //mapInstance为对应的qq map实例
+    //     position,
+    //     visible: true
+    //   };
+    //   var options = Object.assign({}, defaultOps, opts || {});
+    //   var marker = new qq.maps.Marker(options);
+    //   this.getImg("arrow", marker);
+    //   return marker;
+    // },
     computeRotaion(heading) {
       let rotation;
       if (0 < heading <= 90) {
@@ -307,19 +311,150 @@ export default {
         }
         // 返回从一个坐标到另一个坐标的航向。航向是指从一个坐标指向另一个坐标的向量与正北方向的夹角，范围为[-180,180)。
         heading = spherical.computeHeading(pixelStart, pixelEnd); //两经纬度坐标点之间的航向
-        console.log("heading", heading);
+        // console.log("heading", heading);
         arrowLatLng = spherical.computeOffsetOrigin(
           pixelEnd,
           distance / 2,
           heading
         ); //通过终点坐标、距离以及航向算出起始点坐标。
 
-        marker = this.addMarkers(arrowLatLng.lat, arrowLatLng.lng, defaultOps);
+        // marker = this.addMarkers(arrowLatLng.lat, arrowLatLng.lng, defaultOps);
         rotation = this.computeRotaion(heading); //由两坐标点之间的航向计算marker要旋转的角度
-        console.log("rotation", rotation);
-        marker.setRotation(rotation); //设置marker角度  rotation属性取值范围0-360,支持IE9及以上版本
+        // console.log("rotation", rotation);
+        // marker.setRotation(rotation); //设置marker角度  rotation属性取值范围0-360,支持IE9及以上版本
       }
+    },
+    getTrajectory(){
+      this.$axios.post('/api/auth/quick_login',{
+        platform:this.platform,
+        openid:this.openid,
+      }).then(res =>{
+        console.log(res)
+        if(res.code == 200){
+          let data = res.data;
+          this.$store.commit('set_token', 'bearer ' + data.access_token);
+          this.access_token = res.data.access_token
+          this.$router.go(0);
+        }
+      })
+    },
+    tracker(){
+      let id  = this.$route.query.order_id;
+      this.$axios.get('/api/order/tracker',{
+            id:id,
+            token:this.access_token
+            }).then(res =>{
+              console.log(res)
+              if(res.code == 200){
+                if(res.data.points.length ==0){
+                  console.log('没有轨迹，拿订单详情接口');
+                  this.$axios.get('/api/order/detail',{
+                     id:id,
+                     token:this.access_token
+                  })
+                  .then(res=>{
+                    if(res.code = 200){
+                        console.log(res,'获取到详情')
+                        let Mrheji=[];
+                        var Mrline ={}
+                        var Mr_lng = res.data.order_lng
+                        var Mr_lat = res.data.order_lat
+                        Mrline.lat = Mr_lat
+                        Mrline.lng = Mr_lng
+                        Mrheji.push(Mrline)
+                        this.resData.path = Mrheji
+                        this.init();
+                        this.order_address = res.data.order_address
+                        this.order_destination_address =  res.data.order_destination_address
+                        this.money = res.data.money
+                        this.mileage =res.data.mileage
+                        this.total_minute =res.data.total_minute
+                    }
+                   })
+                   
+                }else{
+                  var i= ''
+                  var number = res.data.points.length;
+                  let lineheji=[];
+                  let markerheji =[]
+                  for(var i = 0; i<number; i++) {
+                    var lineObj ={}
+ 　　               var line = res.data.points[i].location
+                    var linelng =line.match(/(\S*),/)[0]
+                    var linelng1 = linelng.substring(0,linelng.length-1)
+                    var linelat = line.match(/,(\S*)/)[0]
+                    var linelat1 =linelat.substr(1);
+                    lineObj.lat = linelat1;
+                    lineObj.lng = linelng1;
+                    lineheji.push(lineObj)
+                  }
+                  this.resData.path = lineheji
+                  lineheji[0].nodeMapType = 2
+                  lineheji[number-1].nodeMapType = 5
+                  markerheji.push(lineheji[0])
+                  markerheji.push(lineheji[number-1])
+                  this.resData.markers = markerheji
+                  console.log(markerheji)
+                  // console.log(this.resData.path)
+                  this.init();
+                  this.orderDetail();
+                }
+              }else{
+                  // this.$router.go(0);
+              }
+          })
+    },
+    orderDetail(){
+      let id  = this.$route.query.order_id;
+      let newurl = id.substring(0, 18);
+      this.$axios.get('/api/order/detail',{
+        id:newurl,
+        token:this.access_token
+      })
+      .then(res=>{
+        console.log(res)
+        this.order_address = res.data.order_address
+        this.order_destination_address =  res.data.order_destination_address
+        this.money = res.data.money
+        this.mileage =res.data.mileage
+        this.total_minute =res.data.total_minute
+      })
+    },
+    getCodeApi(state) {
+      //获取code
+      let urlNow = encodeURIComponent(window.location.href);
+      let scope = "snsapi_userinfo"; //snsapi_userinfo   //静默授权 用户无感知
+      let appid = "wx8db3af77b48702ea";
+      let url = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${appid}&redirect_uri=${urlNow}&response_type=code&scope=${scope}&state=${state}#wechat_redirect`;
+      window.location.replace(url);
+    },
+    getUrlKey(name) {
+      //获取url 参数
+      return (
+        decodeURIComponent(
+          (new RegExp("[?|&]" + name + "=" + "([^&;]+?)(&|#|;|$)").exec(
+            location.href
+          ) || [, ""])[1].replace(/\+/g, "%20")
+        ) || null
+      );
     }
+  },
+  created() {
+    //返回值
+    // let code = this.getUrlKey("code");
+    // if (code) {
+    //   this.$axios
+    //     .post("/api/auth/wechatinfo?code=" + code)
+    //     .then(res => {
+    //       console.log(res);
+    //       if(res.code == 200){
+    //         this.openid = res.data.original.openid;
+    //         this.getTrajectory();
+    //       }
+    //     });
+    // } else {
+    //   this.getCodeApi("123");
+    // }
   }
 };
 </script>
@@ -350,7 +485,7 @@ export default {
     height: 115px;
     border-bottom: 1px solid #d5d5d5;
     line-height: 115px;
-    font-size: 32px;
+    font-size: 28px;
     float: left;
     img {
       width: 40px;
@@ -376,6 +511,7 @@ export default {
   .box_2 {
     width: 100%;
     height: 100px;
+    overflow: hidden;
     p {
       width: 80%;
       text-align: left;
@@ -399,6 +535,7 @@ export default {
   .box_3 {
     width: 100%;
     height: 100px;
+    overflow: hidden;
     p {
       width: 60%;
       text-align: left;
@@ -431,7 +568,6 @@ export default {
       a {
         font-size: 28px;
         color: #fff;
-        display: block;
       }
     }
   }

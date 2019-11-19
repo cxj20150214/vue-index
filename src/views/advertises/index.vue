@@ -42,27 +42,27 @@
           </div>
         </div>
     </div>-->
-    <div class="adv_1">
+    <div class="adv_1 adv_bottom">
       <div class="adv_ti">
         <span>报名信息</span>
       </div>
       <div class="adv_4" ref="putcontent">
-        <el-form :model="ruleForm" ref="ruleForm" label-width="100px" class="demo-ruleForm">
+        <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
           <el-form-item label="姓名:" prop="name">
             <el-input v-model="ruleForm.name" placeholder="请输入您的姓名"></el-input>
           </el-form-item>
           <el-form-item label="电话:" prop="phone">
             <el-input v-model="ruleForm.phone" type="number" placeholder="请输入您的手机号"></el-input>
           </el-form-item>
-          <el-form-item label="驾龄:" prop="age">
+          <el-form-item label="驾龄:" prop="driving_age">
             <el-input v-model="ruleForm.driving_age" type="number" placeholder="请输入您的驾龄"></el-input>
           </el-form-item>
-          <el-form-item label="地区:">
+          <el-form-item label="地区:" prop="">
             <el-cascader class="cityChoice" ref="myCascader" :options="data" @change="handleChange"></el-cascader>
           </el-form-item>
-          <el-form-item label="公司:">
+          <el-form-item label="公司:" prop="company">
             <el-select
-              v-model="value1"
+              v-model="ruleForm.company"
               placeholder="请选择"
               class="companyChoice"
               @change="handleChange1"
@@ -72,7 +72,7 @@
           </el-form-item>
           <el-input v-model="ruleForm.region_id" class="hidden_input" type="hidden"></el-input>
           <el-input v-model="ruleForm.company_id" class type="hidden"></el-input>
-          <el-button class="adv_button" type="primary" @click="submitForm('ruleForm')">提交</el-button>
+          <button class="adv_button" type="primary" @click.prevent="submitForm('ruleForm')">提交</button>
         </el-form>
       </div>
     </div>
@@ -104,18 +104,20 @@ export default {
         phone: "",
         driving_age: "",
         region_id: "",
-        company_id: ""
+        company_id: "",
+        company:''
       },
-      value1: "",
       options: [],
-      // rules: {
-      //   name: [
-      //     { message: "请输入姓名", trigger: "blur" },
-      //     { min: 1, max: 5, message: "长度在 3 到 5 个字符", trigger: "blur" }
-      //   ],
-      //   phone: [{ validator: checkPhone, trigger: "blur" }],
-      //   age: [{ min: 1, max: 2, message: "驾龄不符", trigger: "blur" }]
-      // },
+      rules: {
+        name: [
+          { required: true,message: "请输入姓名", trigger: "blur" },
+          { min: 1, max: 5, message: "长度在 3 到 5 个字符", trigger: "blur" }
+        ],
+        address:[{required: true,message: "地区为必填",trigger: "blur"}],
+        phone: [{ required: true, validator: checkPhone, trigger: "blur" }],
+        driving_age: [{ required: true,message: "驾龄为必填", trigger: "blur" }],
+        company: [{ required: true,message: "公司为必填", trigger: "blur" }]
+      },
       props: {
         lazy: true,
         lazyLoad(node, resolve) {
@@ -137,7 +139,7 @@ export default {
     handleChange(value) {
       this.ruleForm.region_id = value[2];
       this.$axios
-        .get("http://api.bzffs.cc/api/wechat/region/company", {
+        .get("/api/wechat/region/company", {
           id: this.ruleForm.region_id
         })
         .then(res => {
@@ -147,26 +149,28 @@ export default {
     },
     handleChange1(value) {
       this.ruleForm.company_id = value;
+      this.ruleForm.company =value;
     },
     getCity() {
       this.$axios
-        .get("http://api.bzffs.cc/api/wechat/region/list")
+        .get("/api/wechat/region/list")
         .then(res => {
           this.data = res.data;
         });
     },
-    submitForm(ruleForm) {
-      this.$refs[ruleForm].validate(valid => {
+    submitForm(formName) {
+      this.$refs[formName].validate(valid => {
         if (valid) {
-          let data = this.ruleForm
+          let data = this.ruleForm;
           this.$axios
-            .post("http://api.bzffs.cc/api/wechat/driver/signup",data)
+            .post("/api/wechat/driver/signup", data)
             .then(res => {
-              if(res.code == 200){
-                alert('提交成功')
+              if (res.code == 200) {
+                alert("提交成功");
               }
-              if(res.code == 422){
-                alert(res.message)
+              if (res.code == 422) {
+                alert(res.message);
+                return
               }
             });
         } else {
@@ -211,10 +215,12 @@ export default {
 .adv_button {
   width: 270px;
   height: 65px;
-  margin: 0px auto 0px;
+  margin: 0px auto 0px !important;
   font-size: 24px;
-  background: #3366ff !important;
+  background-color: #3366ff !important;
   display: block;
+  border: 0px;
+  color: #fff;
 }
 .adv_ti {
   font-size: 1.2rem;
@@ -304,6 +310,9 @@ export default {
   border-top: 1px solid #ffc739;
   border-right: 1px solid #ffc739;
 }
+.adv_bottom{
+  margin-bottom: 120px;
+}
 .adv_3_2::before {
   bottom: 0;
   left: 0;
@@ -351,24 +360,28 @@ export default {
     color: #333;
   }
   .el-form-item__label {
-    font-size: 26px;
+    font-size: 30px;
     width: 100px !important;
     border-bottom: 1px solid #d5d5d5;
-    height: 40px;
+    height: 80px;
     text-align: left;
+    line-height: 80px;
   }
   .el-form-item__content {
     margin-left: 100px !important;
   }
   .el-input {
-    font-size: 24px;
+    font-size: 32px;
   }
   .el-form-item__error {
-    font-size: 16px;
+    font-size:20px;
   }
   .el-input__inner {
     border: 0px;
     border-bottom: 1px solid #d5d5d5;
+    text-align: left;
+    height: 80px;
+    line-height: 80px;
   }
 }
 .adv_p {
@@ -382,30 +395,32 @@ export default {
   background-color: #f4d31c;
   bottom: 0;
   width: 100%;
-  font-size: 1.15rem;
+  height:100px;
+  font-size: 36px;
   color: #fff;
-  line-height: 3.1rem;
+  line-height:100px;
   position: fixed;
 }
 .el-cascader__dropdown {
   width: 96%;
   left: 2% !important;
-  height: 400px;
 }
 .el-cascader-menu {
   width: 33.33%;
 }
 .el-cascader-panel {
-  font-size: 24px;
+  font-size: 28px;
 }
 .el-cascader-node {
-  height: 50px;
-  line-height: 50px;
+  height: 80px;
+  line-height: 80px;
 }
 .el-cascader-menu__wrap {
   height: 400px;
 }
 .el-select-dropdown__item {
-  font-size: 24px;
+  height: 60px;
+  line-height: 60px;
+  font-size: 32px !important;
 }
 </style>

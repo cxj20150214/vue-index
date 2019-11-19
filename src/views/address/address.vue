@@ -5,7 +5,7 @@
         <div class="city">
           <div class="city_choice">
             <img class="dw" src="../../img/szcs.png" alt />
-            <p>所在城市</p>
+            <p>{{city}}{{addr}}</p>
             <img class="qh" src="../../img/qh.png" alt @click="choiceCity()" />
           </div>
           <div class="city_show">
@@ -62,27 +62,60 @@ export default {
   name: "index",
   data() {
     return {
-      value: ["35", "3502", "350203"],
+      value: [],
       data: [],
       cityVal: "",
+      order_address:'',
+      order_lng :'',
+      order_lat :'',
+      adcode:'',
+      addr:'',
       bgShow: false,
       regId: "",
       cityLaber: "",
-      regName: "厦门市思明区",
+      regName: "",
       loading: false,
       priceList: "",
       priceShow: true,
       nopriceShow: false,
-      remarks: ""
+      remarks: "",
+      province:'',
+      city:'',
+      district:''
     };
   },
   methods: {
+     getMyLocation() {
+                var geolocation = new qq.maps.Geolocation("CCHBZ-QHXK5-4VKIO-QYX6L-ODEHV-EZBXB", "洪师傅-h5");
+                geolocation.getIpLocation(this.showPosition, this.showErr);
+                //geolocation.getLocation(this.showPosition, this.showErr);//或者用getLocation精确度比较高
+            },
+            showPosition(position) {
+                var value =[];
+                this.adcode = position.adcode;
+                var pro = position.adcode.toString().substring(0, 2)
+                var city = position.adcode.toString().substring(0, 4)
+                var addr = position.adcode.toString()
+                value.push(pro,city,addr)
+                this.value = value
+                this.order_lat = position.lat;
+                this.order_lng = position.lng;
+                this.city = position.city;
+                this.addr = position.addr;
+                this.getCity();
+                this.getPrice();
+            },
+            showErr() {
+                console.log("定位失败");
+                this.getMyLocation();//定位失败再请求定位，测试使用
+            },
     handleChange(value) {
+      console.log(value)
       this.regName =
         this.$refs.myCascader.getCheckedNodes()[0].pathLabels[1] +
         this.$refs.myCascader.getCheckedNodes()[0].pathLabels[2];
       this.regId = value[2];
-      this.$axios.get("http://api.bzffs.cc/api/wechat/company/charge_standard", {
+      this.$axios.get("/api/wechat/company/charge_standard", {
           id: this.regId
         })
         .then(res => {
@@ -92,7 +125,7 @@ export default {
               this.loading = false;
               this.priceShow = true;
               this.nopriceShow = false;
-            }, 800);
+            }, 100);
             this.priceList = res.data.chargeStandard[0].standard;
             this.remarks = res.data.chargeStandard[0].remark;
           }
@@ -101,7 +134,7 @@ export default {
               this.loading = false;
               this.priceShow = false;
               this.nopriceShow = true;
-            }, 800);
+            }, 100);
           }
         });
     },
@@ -111,15 +144,16 @@ export default {
     },
     getCity() {
       this.$axios
-        .get("http://api.bzffs.cc/api/wechat/region/list")
+        .get("/api/wechat/region/list")
         .then(res => {
           this.data = res.data;
+          console.log(res.data)
         });
     },
     getPrice() {
       this.$axios
-        .get("http://api.bzffs.cc/api/wechat/company/charge_standard", {
-          id: 350203
+        .get("/api/wechat/company/charge_standard", {
+          id: this.adcode
         })
         .then(res => {
           this.loading = true;
@@ -128,14 +162,31 @@ export default {
             this.priceList = res.data.chargeStandard[0].standard;
             setTimeout(() => {
               this.loading = false;
-            }, 800);
+            }, 100);
+          }
+          if (res.code == 422) {
+            setTimeout(() => {
+              this.loading = false;
+              this.priceShow = false;
+              this.nopriceShow = true;
+            }, 100);
           }
         });
     }
   },
+  created(){
+    // this.$axios.get('https://apis.map.qq.com/ws/geocoder/v1/?location= ',{
+    //   location:'24.472775,118.155727',
+    //   key:'CCHBZ-QHXK5-4VKIO-QYX6L-ODEHV-EZBXB'
+    // }).then(res=>{
+    //   console.log(res)
+    //   // console.log('res')
+    // })
+  },
   mounted() {
     this.getCity();
     this.getPrice();
+    this.getMyLocation();
   }
 };
 </script>
@@ -367,6 +418,9 @@ export default {
 }
 </style>
 <style lang="less">
+.el-cascader-menu__wrap{
+  height:600px!important;
+}
 .el-input__inner {
   text-align: center;
   border: 0px;
@@ -374,31 +428,42 @@ export default {
 .el-input__icon {
   display: none;
 }
-.el-input {
+.city_show{
+  .el-input {
   font-size: 32px;
   text-align: center;
 }
+.el-cascader{
+  border:0px;
+}
+.el-input__inner{
+  border:0px;
+}
+.el-input__suffix{
+  display: none;
+}
+}
 .el-cascader-menu {
-  min-width: 225px;
+  min-width: 225px!important;
 }
 .el-cascader-panel {
-  font-size: 28px;
+  font-size: 28px!important;
 }
 .el-cascader-node.in-active-path {
-  height: 60px;
-  color: #f34845;
+  height: 60px!important;
+  color: #f34845!important;
 }
 .el-cascader-node {
-  height: 60px;
-  line-height: 60px;
+  height: 60px!important;
+  line-height: 60px!important;
 }
 .el-cascader-node.in-active-path,
 .el-cascader-node.is-active,
 .el-cascader-node.is-selectable.in-checked-path {
-  color: #f34845;
+  color: #f34845!important;
 }
 .el-cascader-node__prefix {
-  left: 285px;
+  left: 285px!important;
 }
 </style>
 <style lang="less">
