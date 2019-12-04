@@ -73,6 +73,7 @@ export default {
   inject: ['reload'],
   data() {
     return {
+      appid:'',
       thisAddress:'',
       order_id:'',
       extension_shop:'0',
@@ -188,7 +189,7 @@ export default {
                 this.access_token = res.data.access_token
                 let data = res.data;
                 this.$store.commit('set_token', 'bearer ' + data.access_token);
-                
+                window.location.reload()
               }
           })
         } else {
@@ -199,7 +200,13 @@ export default {
       });
     },
     callDriver() {
-      this.extension_shop = this.$route.query.extension_shop;
+      var thisUrl = this.$route.fullPath
+      if(thisUrl.indexOf("extension_shop") == -1){
+        this.extension_shop = 0
+      }
+      if(thisUrl.indexOf("extension_shop") != -1){
+        this.extension_shop = this.$route.query.extension_shop;
+      }
       this.$axios.post('/api/order/pagesave',{
             order_address :this.thisAddress,
             order_lng :this.order_lng ,
@@ -225,15 +232,45 @@ export default {
             if(res.code ==422){
               alert(res.message);
             }
+            if(res.code ==500){
+              alert(res.message);
+            }
       })
     },
      getCodeApi(state) {
       //获取code
-      let urlNow = encodeURIComponent(window.location.href);
-      let scope = "snsapi_userinfo"; //snsapi_userinfo   //静默授权 用户无感知
-      let appid = "wx8db3af77b48702ea";
-      let url = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${appid}&redirect_uri=${urlNow}&response_type=code&scope=${scope}&state=${state}#wechat_redirect`;
-      window.location.replace(url);
+      var thisUrl = this.$route.fullPath
+      if(thisUrl.indexOf("service_id") == -1){
+        this.$axios.get('/api/wechat/info/appid',{
+         service_id:2
+       })
+       .then(res=>{
+          console.log(res,'获取到appid');
+          let urlNow = encodeURIComponent(window.location.href);
+          let scope = "snsapi_userinfo"; //snsapi_userinfo   //静默授权 用户无感知
+          let appid = "";
+          appid = res.data
+          console.log(appid)
+          let url = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${appid}&redirect_uri=${urlNow}&response_type=code&scope=${scope}&state=${state}#wechat_redirect`;
+          window.location.replace(url);
+       })
+      }
+      if(thisUrl.indexOf("service_id") != -1){
+        let service_id =  this.$route.query.service_id
+        this.$axios.get('/api/wechat/info/appid',{
+         service_id:service_id
+       })
+       .then(res=>{
+          console.log(res,'获取到appid');
+          let urlNow = encodeURIComponent(window.location.href);
+          let scope = "snsapi_userinfo"; //snsapi_userinfo   //静默授权 用户无感知
+          let appid = "";
+          appid = res.data
+          console.log(appid)
+          let url = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${appid}&redirect_uri=${urlNow}&response_type=code&scope=${scope}&state=${state}#wechat_redirect`;
+          window.location.replace(url);
+       })
+      }
     },
     getUrlKey(name){//获取url 参数
          return decodeURIComponent((new RegExp('[?|&]'+name+'='+'([^&;]+?)(&|#|;|$)').exec(location.href)||[,""])[1].replace(/\+/g,'%20'))||null;
@@ -248,7 +285,8 @@ export default {
           this.access_token = res.data.access_token
           let data = res.data;
           this.$store.commit('set_token', 'bearer ' + data.access_token);
-          this.$router.go(0);
+          // this.$router.go(0);
+          window.location.reload()
         }
         if(res.code ==422){
           this.dialogFormVisible =true
@@ -320,6 +358,7 @@ export default {
             this.getOrder();
           }
         });
+      // console.log(code)
     } else {
       this.getCodeApi("123");
     }

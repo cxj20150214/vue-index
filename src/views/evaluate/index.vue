@@ -2,7 +2,7 @@
   <div>
     <div class="evaluate">
       <div class="eva_box">
-        <p class="title">您对本次洪师傅代驾服务师傅满意？</p>
+        <p class="title">您对本次代驾服务的师傅是否满意?</p>
         <el-form
           :model="ruleForm"
           ref="ruleForm"
@@ -59,7 +59,7 @@ export default {
               evaluate_item:this.ruleForm.itemsstring.join(','),
               evaluate_reason:this.ruleForm.desc
             }).then(res=>{
-              if(res.data.code == 200){
+              if(res.code == 200){
                 alert("提交成功！")
               }else{
                 alert(res.message)

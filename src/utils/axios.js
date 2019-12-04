@@ -8,8 +8,8 @@ axios.defaults.withCredentials = false;
 axios.defaults.headers.common['Authorization'] = store.state.token;
 // axios初始化：延迟时间，主路由地址
 let instance = axios.create({
-  // baseURL: 'https://hsf-api.threeape.com',
-  baseURL: ' http://api.bzffs.cc/',
+  baseURL: 'https://hsf-api.threeape.com',
+  // baseURL: ' http://api.bzffs.cc/',
   timeout: 10000,
   headers: {
     // 'x-service-id':"1",

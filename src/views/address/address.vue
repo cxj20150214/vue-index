@@ -46,7 +46,11 @@
                 <p
                   class="p8"
                 >{{item.waittime}}分钟免费，超过{{item.nextwaittime}}分钟{{item.addwaittime}}元不满{{item.nextwaittime}}分钟按{{item.nextwaittime}}分钟计算</p>
+              
               </div>
+              <p v-show="item.rangeover > 0"
+                  class="p9"
+                >远途费，超过{{item.rangeover}}公里以后，每{{item.rangepercent}}公里（超过{{item.overrange}}km收费）加收{{item.addrange}}元</p>
             </div>
             <div class="noPrice" v-show="nopriceShow">抱歉，该区域暂未开放。</div>
             <div class="price3" v-show="priceShow">{{remarks}}</div>
@@ -73,6 +77,7 @@ export default {
       bgShow: false,
       regId: "",
       cityLaber: "",
+      yuantu:true,
       regName: "",
       loading: false,
       priceList: "",
@@ -160,6 +165,7 @@ export default {
           if (res.code == 200) {
             this.remarks = res.data.chargeStandard[0].remark;
             this.priceList = res.data.chargeStandard[0].standard;
+            console.log(res,'远途费')
             setTimeout(() => {
               this.loading = false;
             }, 100);
@@ -185,7 +191,7 @@ export default {
   },
   mounted() {
     this.getCity();
-    this.getPrice();
+    // this.getPrice();
     this.getMyLocation();
   }
 };
@@ -278,9 +284,10 @@ export default {
         display: flex;
         flex-direction: column;
         margin-top: 30px;
+        margin-bottom: 20px;
       }
       .price2 {
-        height: 400px;
+        height: auto;
         border-bottom: 1px solid #d5d5d5;
         display: flex;
         flex-direction: column;
@@ -344,6 +351,11 @@ export default {
         }
         .p8 {
           font-size: 1.2rem;
+        }
+        .p9 {
+          font-size: 1.2rem;
+          margin-top: 15px;
+          margin-bottom: 30px;
         }
       }
       .price3 {

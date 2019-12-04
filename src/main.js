@@ -40,6 +40,7 @@ new Vue({
     this.$store.state.token =  localStorage.getItem("set_token");
     // 根据service_id设置统一标题
     var thisUrl = this.$route.fullPath
+    console.log(this.$route.fullPath,'111')
     if(thisUrl.indexOf("service_id") != -1){
      var service_id =  this.$route.query.service_id
      this.$axios.get('/api/wechat/info/info',{

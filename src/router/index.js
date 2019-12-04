@@ -2,6 +2,16 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import index from '@/views/index/index'
 import address from '@/views/address/address'
+import callDriver from '@/views/callDriver/index'
+import advertises from '@/views/advertises/index'
+import recommend from '@/views/recommend/index'
+import tixian from '@/views/recommend/tixian'
+import reward from '@/views/recommend/reward'
+import invitation from '@/views/invitation/invitation'
+import trip from '@/views/trip/index'
+import evaluate from '@/views/evaluate/index'
+import hotline from '@/views/hotline/index'
+import coupon from '@/views/coupon/index'
 import store from '../store/store'
 
 Vue.use(Router)
@@ -34,44 +44,74 @@ const router= new Router({
       }
     },
     {
-      path:'/advertises',name:'advertises',component:()=>import('../views/advertises/index')
+      path:'/advertises',name:'advertises',component: advertises,
+      meta: {
+        title: ''
+      }
     },
     {
-      path:'/recommend',name:'recommend',component:()=>import('../views/recommend/index')
+      path:'/recommend',name:'recommend',component: recommend,
+      meta: {
+        title: ''
+      }
     },
     {
-      path:'/tixian',name:'tixian',component:()=>import('../views/recommend/tixian.vue')
+      path:'/tixian',name:'tixian',component: tixian,
+      meta: {
+        title: ''
+      }
     },
     {
-      path:'/reward',name:'reward',component:()=>import('../views/recommend/reward.vue')
+      path:'/reward',name:'reward',component: reward,
+      meta: {
+        title: ''
+      }
     },
     {
       path: '/invitation',
       name: 'invitation',
-      component:()=>import('../views/invitation/invitation')
+      component: invitation,
+      meta: {
+        title: ''
+      }
     },
     {
       path: '/trip',
       name: 'trip',
-      component:()=>import('../views/trip/index')
+      component: trip,
+      meta: {
+        title: ''
+      }
     },
     {
       path: '/evaluate',
       name: 'evaluate',
-      component:()=>import('../views/evaluate/index')
+      component: evaluate,
+      meta: {
+        title: ''
+      }
     },
     {
       path: '/callDriver',
       name: 'callDriver',
-      component:()=>import('../views/callDriver/index')
+      component: callDriver,
+      meta: {
+        title: ''
+      }
     },
     {
       path: '/hotline',
       name: 'hotline',
-      component:()=>import('../views/hotline/index')
+      component: hotline,
+      meta: {
+        title: ''
+      }
     },
     {
-      path:'/coupon',name:'coupon',component:()=>import('../views/coupon/index')
+      path:'/coupon',name:'coupon',component: coupon,
+      meta: {
+        title: ''
+      }
     },
   ],
 })

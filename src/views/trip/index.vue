@@ -42,7 +42,7 @@ export default {
       map: "",
       openid:this.$store.state.openid,
       platform:'official_accounts',
-      access_token:'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC9hcGkuYnpmZnMuY2NcL2FwaVwvYXV0aFwvcXVpY2tfbG9naW4iLCJpYXQiOjE1NzM1Mjg4ODgsImV4cCI6MTU3NDczODQ4OCwibmJmIjoxNTczNTI4ODg4LCJqdGkiOiJxaEpCWE13eThseDFUTDNzIiwic3ViIjoyNzkwMDgsInBydiI6IjIzYmQ1Yzg5NDlmNjAwYWRiMzllNzAxYzQwMDg3MmRiN2E1OTc2ZjcifQ.xL_7eV1AFGeWDMFiRCPjQYWbkOhkzIiGvRNBcepw1aM',
+      access_token:'',
       orderId:'',
       resData: {
         markers: [
@@ -329,12 +329,13 @@ export default {
         platform:this.platform,
         openid:this.openid,
       }).then(res =>{
-        console.log(res)
+        console.log(res,'快捷登录获取token')
         if(res.code == 200){
           let data = res.data;
           this.$store.commit('set_token', 'bearer ' + data.access_token);
           this.access_token = res.data.access_token
-          this.$router.go(0);
+          // this.$router.go(0);
+          window.location.reload()
         }
       })
     },
@@ -344,7 +345,7 @@ export default {
             id:id,
             token:this.access_token
             }).then(res =>{
-              console.log(res)
+              console.log(res,'获取轨迹')
               if(res.code == 200){
                 if(res.data.points.length ==0){
                   console.log('没有轨迹，拿订单详情接口');
@@ -356,6 +357,7 @@ export default {
                     if(res.code = 200){
                         console.log(res,'获取到详情')
                         let Mrheji=[];
+                        let markerheji =[]
                         var Mrline ={}
                         var Mr_lng = res.data.order_lng
                         var Mr_lat = res.data.order_lat
@@ -363,6 +365,9 @@ export default {
                         Mrline.lng = Mr_lng
                         Mrheji.push(Mrline)
                         this.resData.path = Mrheji
+                        Mrheji[0].nodeMapType = 2
+                        markerheji.push(Mrheji[0])
+                        this.resData.markers = markerheji
                         this.init();
                         this.order_address = res.data.order_address
                         this.order_destination_address =  res.data.order_destination_address
@@ -422,11 +427,38 @@ export default {
     },
     getCodeApi(state) {
       //获取code
-      let urlNow = encodeURIComponent(window.location.href);
-      let scope = "snsapi_userinfo"; //snsapi_userinfo   //静默授权 用户无感知
-      let appid = "wx8db3af77b48702ea";
-      let url = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${appid}&redirect_uri=${urlNow}&response_type=code&scope=${scope}&state=${state}#wechat_redirect`;
-      window.location.replace(url);
+      var thisUrl = this.$route.fullPath
+      if(thisUrl.indexOf("service_id") == -1){
+        this.$axios.get('/api/wechat/info/appid',{
+         service_id:2
+       })
+       .then(res=>{
+          console.log(res,'获取到appid');
+          let urlNow = encodeURIComponent(window.location.href);
+          let scope = "snsapi_userinfo"; //snsapi_userinfo   //静默授权 用户无感知
+          let appid = "";
+          appid = res.data
+          console.log(appid)
+          let url = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${appid}&redirect_uri=${urlNow}&response_type=code&scope=${scope}&state=${state}#wechat_redirect`;
+          window.location.replace(url);
+       })
+      }
+      if(thisUrl.indexOf("service_id") != -1){
+        let service_id =  this.$route.query.service_id
+        this.$axios.get('/api/wechat/info/appid',{
+         service_id:service_id
+       })
+       .then(res=>{
+          console.log(res,'获取到appid');
+          let urlNow = encodeURIComponent(window.location.href);
+          let scope = "snsapi_userinfo"; //snsapi_userinfo   //静默授权 用户无感知
+          let appid = "";
+          appid = res.data
+          console.log(appid)
+          let url = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${appid}&redirect_uri=${urlNow}&response_type=code&scope=${scope}&state=${state}#wechat_redirect`;
+          window.location.replace(url);
+       })
+      }
     },
     getUrlKey(name) {
       //获取url 参数
@@ -441,20 +473,20 @@ export default {
   },
   created() {
     //返回值
-    // let code = this.getUrlKey("code");
-    // if (code) {
-    //   this.$axios
-    //     .post("/api/auth/wechatinfo?code=" + code)
-    //     .then(res => {
-    //       console.log(res);
-    //       if(res.code == 200){
-    //         this.openid = res.data.original.openid;
-    //         this.getTrajectory();
-    //       }
-    //     });
-    // } else {
-    //   this.getCodeApi("123");
-    // }
+    let code = this.getUrlKey("code");
+    if (code) {
+      this.$axios
+        .post("/api/auth/wechatinfo?code=" + code)
+        .then(res => {
+          console.log(res,'获取openid');
+          if(res.code == 200){
+            this.openid = res.data.original.openid;
+            this.getTrajectory();
+          }
+        });
+    } else {
+      this.getCodeApi("123");
+    }
   }
 };
 </script>
