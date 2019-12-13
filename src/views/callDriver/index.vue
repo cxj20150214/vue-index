@@ -135,8 +135,8 @@ export default {
                 this.NearbyDriver();
             },
             showErr() {
-                console.log("定位失败");
-                // this.getMyLocation();//定位失败再请求定位，测试使用
+                alert('定位失败');
+                this.getMyLocation();//定位失败再请求定位，测试使用
                 
             },
    //手机验证发送验证码
