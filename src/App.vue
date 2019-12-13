@@ -2,19 +2,34 @@
 
   <div id="app">
      <!--头部导航-->
-     <router-view></router-view>
+     <router-view v-if="isRouterAlive"></router-view>
   </div>
 </template>
 <script>
 import $ from 'jquery'
 export default {
   name: 'App',
+  data () {
+      return {
+        isRouterAlive: true
+      }
+  },
   components:{
   },
   methods:{
-   
+    reload () {
+      this.isRouterAlive = false
+      this.$nextTick(function() {
+         this.isRouterAlive = true
+      })
+    }
   },
   mounted(){
+  },
+  provide () {
+    return {
+      reload: this.reload
+    }
   }
 }
 </script>

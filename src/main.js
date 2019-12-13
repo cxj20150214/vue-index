@@ -26,34 +26,37 @@ Vue.use(VueLazyload, {
 })
 Vue.prototype.$axios = axios;
 Vue.use(animated)
-
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
   router,
   store,
   components: { App },
-  template: '<App/>'
+  template: '<App/>',
+  created(){
+    if(localStorage.getItem("set_token") === null){
+      localStorage.setItem("set_token","");
+    }
+    this.$store.state.token =  localStorage.getItem("set_token");
+    // 根据service_id设置统一标题
+    var thisUrl = this.$route.fullPath
+    console.log(this.$route.fullPath,'111')
+    if(thisUrl.indexOf("service_id") != -1){
+     var service_id =  this.$route.query.service_id
+     this.$axios.get('/api/wechat/info/info',{
+      service_id:service_id
+    })
+    .then(res=>{
+      console.log(res,2222222222);
+      document.title = res.data
+    })
+    }
+    if(thisUrl.indexOf("service_id") == -1){
+      document.title = "洪师傅代驾"
+    }
+  }
 })
 // 路由守卫
-router.beforeEach((to, from, next) => {
-  var token = sessionStorage.getItem('token');
-  // 判断路由组件中的某个属性 
-  if (to.meta.requiresAuth === true) {
-    if (token) {
-      return next();
-    } else {
-      return next({name: 'login'});
-    }
-  }
-
-  if (to.meta.requiresGuest === true) {
-    if (token) {
-      return next({name: 'business'});
-    } else {
-      return next();
-    }
-  }
-
-  next();
-});
+// router.beforeEach((to, from, next) => {
+//  console.log('路由守卫')
+// })
