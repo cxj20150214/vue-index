@@ -121,8 +121,8 @@ export default {
     },
     getMyLocation() {
                 var geolocation = new qq.maps.Geolocation("CCHBZ-QHXK5-4VKIO-QYX6L-ODEHV-EZBXB", "洪师傅-h5");
-                geolocation.getIpLocation(this.showPosition, this.showErr);
-                //geolocation.getLocation(this.showPosition, this.showErr);//或者用getLocation精确度比较高
+                // geolocation.getIpLocation(this.showPosition, this.showErr);
+                geolocation.getLocation(this.showPosition, this.showErr);//或者用getLocation精确度比较高
             },
             showPosition(position) {
                 console.log(position);
@@ -137,7 +137,6 @@ export default {
             showErr() {
                 alert('定位失败');
                 this.getMyLocation();//定位失败再请求定位，测试使用
-                
             },
    //手机验证发送验证码
     sendcode() {

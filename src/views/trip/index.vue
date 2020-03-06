@@ -6,15 +6,9 @@
         <div class="box_1">
           <img src="../../img/xr.png" alt />
           <p>
-<<<<<<< HEAD
-            1小时40分钟
-            <span style="margin-left:15px">8.8公里</span>
-            <span class="price">¥50</span>
-=======
             {{total_minute}}分钟
             <span style="margin-left:15px">{{mileage}}公里</span>
             <span class="price">¥{{money}}</span>
->>>>>>> develop
           </p>
         </div>
         <div class="box_2">

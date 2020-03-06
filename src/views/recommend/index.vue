@@ -58,7 +58,8 @@ export default {
       this.$router.push({
           path: '/reward',
           query: {
-          service_id:service_id
+          service_id:service_id,
+          openid: this.$store.state.openid
         }
       })
     },

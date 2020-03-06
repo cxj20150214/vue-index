@@ -45,7 +45,7 @@
                 <p class="p7">等待时间：</p>
                 <p
                   class="p8"
-                >{{item.waittime}}分钟免费，超过{{item.nextwaittime}}分钟{{item.addwaittime}}元不满{{item.nextwaittime}}分钟按{{item.nextwaittime}}分钟计算</p>
+                >{{item.waittime}}分钟免费，超过{{item.nextwaittime}}分钟{{item.addwaittime}}元不满{{item.nextwaittime}}分钟按{{item.nextwaittime}}分钟计算(最低消费{{item.minprice}}元)</p>
               
               </div>
               <p v-show="item.rangeover > 0"

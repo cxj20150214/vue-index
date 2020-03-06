@@ -9,7 +9,7 @@
       </div>
       <div
         class="adv_1_1"
-      >洪师傅酒后代驾成立于2013年，成立以来始终把服务顾客，留住顾客,赢得顾客当成宗旨坚持执行到位，目前覆盖30多个城市，同时上线达到数千名的司机覆盖率，正常到达速度10分钟内，同时还为顾客提供5大保障:</div>
+      >洪师傅酒后代驾成立于2013年，成立以来始终把服务顾客，留住顾客,赢得顾客当成宗旨坚持执行到位，目前覆盖100多个城市，同时上线达到万余名的司机覆盖率，正常到达速度10分钟内，同时还为顾客提供5大保障:</div>
       <div class>
         <img src="../../img/hsfimg10.jpg" />
       </div>
@@ -62,7 +62,7 @@
           </el-form-item>
           <el-form-item label="公司:" prop="company">
             <el-select
-              v-model="ruleForm.company"
+              v-model="ruleForm.company_id"
               placeholder="请选择"
               class="companyChoice"
               @change="handleChange1"
@@ -144,6 +144,7 @@ export default {
         })
         .then(res => {
           this.options = res.data;
+          this.ruleForm.company_id='';
           console.log(res);
         });
     },

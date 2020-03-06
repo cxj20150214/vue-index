@@ -58,16 +58,13 @@ export default {
     getHeight() {
       $(document).ready(function() {
         var windowHeight = $(window).height();
-        $(".bg").css("height", windowHeight);
+        $(".bg").css("min-height", windowHeight);
       });
     },
     submitForm(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-          this.$axios.post('/api/activity/coupon/obtain',{
-            id:this.id,
-            mobile:this.ruleForm.name
-          }).then(res=>{
+          this.$axios.post('/api/activity/coupon/obtain?'+'id='+this.id+'&mobile='+this.ruleForm.name).then(res=>{
             if(res.code ==200){
               alert('领取成功！')
               window.location.reload()
@@ -94,7 +91,7 @@ export default {
       console.log(res)
       if(res.code == 200){
         this.bg_url = res.data.bg_url
-        remarkStr = res.data.remark.replace(/↵/g,"\n");
+        remarkStr = res.data.remark.replace(/\n/g,"<br/>")
         console.log(remarkStr)
         this.remark = remarkStr
         this.valid_at = res.data.valid_at
@@ -108,7 +105,7 @@ export default {
   width:600px;
   color:#fff;
   font-size: 28px;
-  margin:40px auto 0px;
+  margin:40px auto 40px;
   text-align:left;
 }
 .hdgz{

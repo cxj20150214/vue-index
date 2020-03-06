@@ -13,7 +13,13 @@ import evaluate from '@/views/evaluate/index'
 import hotline from '@/views/hotline/index'
 import coupon from '@/views/coupon/index'
 import store from '../store/store'
-
+import shopcenter from '@/views/shopcenter/index'
+import shopcard from '@/views/shopcard/index'
+import shopinte from '@/views/shopinte/index'
+import shopbind from '@/views/shopcenter/bind'
+import shopmall from '@/views/shopmall/index'
+import prodetail from '@/views/shopmall/prodetail'
+import confirm from '@/views/shopmall/confirm'
 Vue.use(Router)
 if (sessionStorage.getItem('token')) {
   store.commit('set_token', sessionStorage.getItem('token'))
@@ -109,6 +115,48 @@ const router= new Router({
     },
     {
       path:'/coupon',name:'coupon',component: coupon,
+      meta: {
+        title: ''
+      }
+    },
+    {
+      path:'/shopcenter',name:'shopcenter',component: shopcenter,
+      meta: {
+        title: ''
+      }
+    },
+    {
+      path:'/shopcard',name:'shopcard',component: shopcard,
+      meta: {
+        title: ''
+      }
+    },
+    {
+      path:'/shopinte',name:'shopinte',component: shopinte,
+      meta: {
+        title: ''
+      }
+    },
+    {
+      path:'/shopbind',name:'shopbind',component: shopbind,
+      meta: {
+        title: ''
+      }
+    },
+    {
+      path:'/shopmall',name:'shopmall',component: shopmall,
+      meta: {
+        title: ''
+      }
+    },
+    {
+      path:'/prodetail',name:'prodetail',component: prodetail,
+      meta: {
+        title: ''
+      }
+    },
+    {
+      path:'/confirm',name:'confirm',component: confirm,
       meta: {
         title: ''
       }
