@@ -5,6 +5,7 @@ Vue.use(vuex);
 export default new vuex.Store({
 	state: {
     token: '',
+    token1: '',
     openid:'',
     test:'111',
     id:'',
@@ -12,6 +13,7 @@ export default new vuex.Store({
     shInfo:'',
     title:'',
     indexspan:localStorage.getItem('indexspan') || 0,
+    width_s:document.documentElement.clientWidth
 	},
 	mutations: {
 		Company: (state, data) => {
@@ -26,6 +28,9 @@ export default new vuex.Store({
       localStorage.setItem("set_token",token)
       sessionStorage.token = token
       },
+      set_token1(state, token1) {
+        state.token1 = token1
+        },
       set_openid(state, openid) {
         state.openid = openid
       },

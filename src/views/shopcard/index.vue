@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div :style="{'width':this.$store.state.width_s+'px'}">
     <div class="shopbox">
       <div class="tabs">
         <ul>
@@ -11,97 +11,69 @@
         <div class="user" v-show="num==0">
           <div class="card">
             <ul>
-              <li>
+              <li v-for="item in querylist">
                 <div class="box1">
-                  <p class="txt1">新人用户立减优惠券</p>
+                  <p class="txt1">{{item.rule_name}}</p>
                   <div class="txt_box">
                     <div class="box">
                       <p class="txt2">
-                        <span>50</span>￥
+                        <span>{{item.discount}}</span>￥
                       </p>
-                      <p class="txt3">满100元立减</p>
+                      <p class="txt3">满{{item.money}}元立减</p>
                     </div>
-                    <p class="txt4">凭券消费满100元立减50元仅限本平台使用内使用</p>
+                    <p class="txt4">凭券消费满{{item.money}}元立减{{item.discount}}元仅限本平台使用内使用</p>
                   </div>
-                  <div class="qx">2天后到期</div>
+                  <div class="qx">{{item.invalid_day}}天后到期</div>
                 </div>
                 <div class="box2">
-                  <p>有效期至2020-12-30</p>
+                  <p>有效期至{{item.end_at}}</p>
                   <div class="sy">
-                    <a href>立即使用</a>
-                  </div>
-                </div>
-              </li>
-              <li>
-                <div class="box1">
-                  <p class="txt1">新人用户立减优惠券</p>
-                  <div class="txt_box">
-                    <div class="box">
-                      <p class="txt2">
-                        <span>50</span>￥
-                      </p>
-                      <p class="txt3">满100元立减</p>
-                    </div>
-                    <p class="txt4">凭券消费满100元立减50元仅限本平台使用内使用</p>
-                  </div>
-                  <div class="qx">2天后到期</div>
-                </div>
-                <div class="box2">
-                  <p>有效期至2020-12-30</p>
-                  <div class="sy">
-                    <a href>立即使用</a>
-                  </div>
-                </div>
-              </li>
-              <li>
-                <div class="box1">
-                  <p class="txt1">新人用户立减优惠券</p>
-                  <div class="txt_box">
-                    <div class="box">
-                      <p class="txt2">
-                        <span>50</span>￥
-                      </p>
-                      <p class="txt3">满100元立减</p>
-                    </div>
-                    <p class="txt4">凭券消费满100元立减50元仅限本平台使用内使用</p>
-                  </div>
-                  <div class="qx">2天后到期</div>
-                </div>
-                <div class="box2">
-                  <p>有效期至2020-12-30</p>
-                  <div class="sy">
-                    <a href>立即使用</a>
+                    <a @click="dialogVisible = true,getUrl(item.id)">立即使用</a>
                   </div>
                 </div>
               </li>
             </ul>
+            <div class="unlist" v-show="shownolist==0">您没有未使用的优惠券。</div>
           </div>
+          <el-dialog :visible.sync="dialogVisible" width="60vw" style="margin-top:15vh;">
+            <img class="imgurl" :src="this.imgUrl" alt />
+            <p class="code">请出示此二维码给服务人员扫码核销</p>
+            <p class="code">优惠码：{{this.code}}</p>
+          </el-dialog>
         </div>
         <div class="user" v-show="num==1">
           <div class="card">
             <ul>
-              <li>
+              <li v-for="item in querylist1">
                 <div class="box1">
-                  <p class="txt1">新人用户立减优惠券</p>
+                  <p class="txt1">{{item.rule_name}}</p>
                   <div class="txt_box">
                     <div class="box">
                       <p class="txt2">
-                        <span>50</span>￥
+                        <span>{{item.discount}}</span>￥
                       </p>
-                      <p class="txt3">满100元立减</p>
+                      <p class="txt3">满{{item.money}}元立减</p>
                     </div>
-                    <p class="txt4">凭券消费满100元立减50元仅限本平台使用内使用</p>
+                    <p class="txt4">凭券消费满{{item.money}}元立减{{item.discount}}元仅限本平台使用内使用</p>
                   </div>
-                  <div class="qx">已到期</div>
+                  <div class="qx">已使用</div>
                 </div>
                 <div class="box2">
-                  <p>有效期至2020-12-30</p>
+                  <p>有效期至{{item.end_at}}</p>
                 </div>
               </li>
             </ul>
+            <div class="unlist" v-show="shownolist1==0">您没有已使用的优惠券。</div>
           </div>
         </div>
       </div>
+      <div class="fiex">
+      <img @click="toggle()" src="../../img/fiex.png" alt />
+      <ul class="fiex_box" :class="{active:fiex_box==1}">
+        <li @click="toGift">礼品</li>
+        <li @click="toCenter">中心</li>
+      </ul>
+    </div>
     </div>
   </div>
 </template>
@@ -110,15 +82,142 @@ export default {
   name: "shopcard",
   data() {
     return {
-      num: 0
+      num: 0,
+      querylist: "",
+      querylist1: "",
+      shownolist: 1,
+      shownolist1: 1,
+      dialogVisible: false,
+      imgUrl: "",
+      code: "",
+      fiex_box: 1,
     };
   },
   components: {},
-  methods: {},
-  mounted() {}
+  methods: {
+      // 礼品中心
+    toGift() {
+      var serviceId = this.$route.query.service_id;
+      this.$router.push({
+        path: "/gift",
+        query: {
+          service_id: serviceId
+        }
+      });
+    },
+    // 个人中心
+    toCenter() {
+      var serviceId = this.$route.query.service_id;
+      this.$router.push({
+        path: "/shopcenter",
+        query: {
+          service_id: serviceId
+        }
+      });
+    },
+     // 导航条
+    toggle() {
+      console.log("点击");
+      if (this.fiex_box == 0) {
+        this.fiex_box = 1;
+      } else {
+        this.fiex_box = 0;
+      }
+    },
+    getUrl(value) {
+      console.log(value);
+      this.$axios
+        .get("/api/coupon/qrcode", {
+          id: value,
+          token: this.$store.state.token1
+        })
+        .then(res => {
+          this.imgUrl = res.data.qrcode_url;
+          this.code = res.data.code;
+        });
+    }
+  },
+  mounted() {},
+  created() {
+    var userId = this.$route.query.user_id;
+    // 获取未使用券
+    this.$axios
+      .get("/api/coupon/list", {
+        user_id: userId,
+        token: this.$store.state.token1,
+        type: "1"
+      })
+      .then(res => {
+        if (res.code == 200) {
+          this.querylist = res.data.list;
+          console.log(this.querylist);
+          if (res.data.total == 0) {
+            console.log("列表为空");
+            this.shownolist = 0;
+          }
+        }
+      });
+    // 获取已使用券
+    this.$axios
+      .get("/api/coupon/list", {
+        user_id: userId,
+        token: this.$store.state.token1,
+        type: "2"
+      })
+      .then(res => {
+        if (res.code == 200) {
+          this.querylist1 = res.data.list;
+          console.log(this.querylist);
+          if (res.data.total == 0) {
+            console.log("列表为空");
+            this.shownolist1 = 0;
+          }
+        }
+      });
+  }
 };
 </script>
 <style lang="less" scoped>
+.fiex {
+  width: 102px;
+  height: 102px;
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  img {
+    position: absolute;
+    left: 0px;
+    z-index: 999;
+  }
+  .fiex_box {
+    width: 90px;
+    height: 160px;
+    padding: 5px;
+    box-shadow: 1px 5px 5px rgba(0, 0, 0, 0.1);
+    position: absolute;
+    top: -140px;
+    overflow: hidden;
+    transition: all 0.3s;
+    background: #fff;
+    &.active {
+      top: 20px;
+      height: 0px;
+      box-shadow: 0px 0px 0px rgba(0, 0, 0, 0.1);
+    }
+    li {
+      margin-top: 20px;
+      font-size: 28px;
+    }
+  }
+}
+.imgurl {
+  width: 80%;
+  margin: 0px auto;
+}
+.code{
+  font-size: 24px;
+  margin-top: 10px;
+}
 .shopbox {
   width: 750px;
   margin: 0px auto;
@@ -189,7 +288,7 @@ export default {
                 text-align: left;
                 height: 90px;
                 span {
-                  font-size: 80px;
+                  font-size: 70px;
                 }
               }
               .txt3 {
@@ -237,7 +336,7 @@ export default {
             border-radius: 30px;
             border: 1px solid #f1574d;
             line-height: 60px;
-            margin-left: 200px;
+            margin-left: 80px;
             a {
               display: block;
               color: #f1574d;

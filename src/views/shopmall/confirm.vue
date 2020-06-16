@@ -1,27 +1,29 @@
 <template>
-  <div>
+  <div :style="{'width':this.$store.state.width_s+'px'}">
     <div class="prodetail">
-      <div class="bg" >
-      <h2>订单详情</h2>
+      <div class="bg">
+        <h2>订单详情</h2>
         <div class="det">
           <div class="box">
             <div class="box_tit">
-              <img src="../../img/top.png" alt />
+              <img :src="pic_url" alt />
               <div class="tit">
-                <p class="t1">蓝牙音乐智能音箱</p>
-                <p class="t2">3000积分</p>
+                <p class="t1">{{shop_name}}</p>
+                <p class="t2">{{allprice}}积分</p>
               </div>
               <div class="button1">
-               <p>X1</p>
+                <p>X{{nums}}</p>
               </div>
             </div>
           </div>
           <div style="width:100%;height:20px;background-color:#f7f7f7;"></div>
-          <div class="bz">
-           <p>备注</p>
-           <textarea name="" id=""  rows="10" placeholder="请输入需要备注的信息"></textarea>
+          <!--<div class="bz">
+            <p>备注</p>
+            <textarea name id rows="10" placeholder="请输入需要备注的信息"></textarea>
+          </div>-->
+          <div class="exchange">
+            <a @click="buynow">确认订单</a>
           </div>
-          <div class="exchange"><a href="">确认订单</a></div>
         </div>
       </div>
     </div>
@@ -32,47 +34,93 @@ export default {
   name: "confirm",
   data() {
     return {
-    
+      nums: "",
+      allprice: "",
+      pic_url: "",
+      shop_name: ""
     };
   },
   components: {},
   methods: {
-    
+    buynow() {
+      var thisQuery = {
+        id: this.$route.query.id,
+        nums: this.$route.query.nums,
+        token: this.$store.state.token1
+      };
+      this.$axios.post("/api/goods/exchange", thisQuery).then(res => {
+        if (res.code == 200) {
+          var serviceId = this.$route.query.service_id;
+          alert("购买成功！");
+          if (res.data.is_rule == 0) {
+            this.$router.push({
+              path: "/gift",
+              query: {
+                service_id: serviceId
+              }
+            });
+          }
+          if (res.data.is_rule == 1) {
+            this.$router.push({
+              path: "/shopcard",
+              query: {
+                service_id: serviceId
+              }
+            });
+          }
+        }
+        if (res.code == 422) {
+          var serviceId = this.$route.query.service_id;
+          alert(res.message);
+          this.$router.push({
+            path: "/shopcenter",
+            query: {
+              service_id: serviceId
+            }
+          });
+        }
+      });
+    }
   },
-  mounted() {
-   
+  mounted() {},
+  created() {
+    // window.reload();
+    this.nums = this.$route.query.nums;
+    this.allprice = this.$route.query.allprice;
+    this.pic_url = this.$route.query.pic_url;
+    this.shop_name = this.$route.query.shop_name;
   }
 };
 </script>
 <style lang="less" scoped>
 .bg {
-    h2{
-        height: 90px;
-        line-height: 90px;
-        border-bottom: 1px solid #d5d5d5;
-        text-align: left;
-        font-size: 32px;
-        padding-left: 30px;
-        margin-top: 20px;
-        color:#666;
-    }
+  h2 {
+    height: 90px;
+    line-height: 90px;
+    border-bottom: 1px solid #d5d5d5;
+    text-align: left;
+    font-size: 32px;
+    padding-left: 30px;
+    margin-top: 20px;
+    color: #666;
+  }
   width: 100vw;
   .det {
     width: 100vw;
     height: 50vh;
     background-color: #fff;
-    .bz{
-        padding:30px;
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        p{
-            font-size: 32px;
-        }
-        textarea{
-            font-size: 32px;
-            width:70vw;
-        }
+    .bz {
+      padding: 30px;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      p {
+        font-size: 32px;
+      }
+      textarea {
+        font-size: 32px;
+        width: 70vw;
+      }
     }
     .num {
       display: flex;
@@ -84,25 +132,25 @@ export default {
         color: #333;
         text-align: left;
       }
-      .label{
+      .label {
         display: flex;
         flex-direction: row;
-        button{
-          width:50px;
+        button {
+          width: 50px;
           height: 50px;
           line-height: 42px;
           text-align: center;
           font-size: 28px;
-          border:1px solid #999;
+          border: 1px solid #999;
           background-color: #f1f1f1;
         }
-        input{
+        input {
           text-align: center;
           height: 50px;
-          width:60px;
-          border:1px solid #999;
+          width: 60px;
+          border: 1px solid #999;
           font-size: 28px;
-          color:#666;
+          color: #666;
         }
       }
     }
@@ -152,16 +200,16 @@ export default {
         }
       }
     }
-    .exchange{
-      width:90%;
+    .exchange {
+      width: 90%;
       margin: 10vh auto;
       border-radius: 50px;
       height: 85px;
       line-height: 85px;
       text-align: center;
       background-color: #ff4f59;
-      a{
-        color:#fff;
+      a {
+        color: #fff;
         font-size: 32px;
         display: block;
       }

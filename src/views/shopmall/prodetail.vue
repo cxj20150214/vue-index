@@ -1,36 +1,36 @@
 <template>
-  <div>
+  <div :style="{'width':this.$store.state.width_s+'px'}">
     <div class="prodetail">
       <div class="banner">
-        <img src="../../img/top.png" alt />
+        <img :src="proDetail.pic_url" alt />
       </div>
       <div class="box">
         <div class="box_tit">
           <div class="tit">
-            <p class="t1">蓝牙音乐智能音箱</p>
-            <p class="t2">3000积分</p>
+            <p class="t1">{{proDetail.shop_name}}</p>
+            <p class="t2">{{proDetail.nums}}积分</p>
           </div>
           <div class="button">
             <a v-on:click="open">立即抢购</a>
           </div>
         </div>
         <div class="kc">
-          <p>库存：{{stock}}份</p>
+          <p>库存：{{proDetail.stock}}份</p>
           <p>X 不支持退款</p>
         </div>
       </div>
       <div style="width:100%;height:20px;background-color:#f7f7f7;"></div>
       <div class="detail">
         <h2>商品详情</h2>
-        <img src="../../img/top.png" alt />
+        <div v-html="proDetail.remark"></div>
       </div>
       <div class="bg" v-show="play">
         <div class="det">
           <div class="box">
             <div class="box_tit">
-              <img src="../../img/top.png" alt />
+              <img :src="proDetail.pic_url" alt />
               <div class="tit">
-                <p class="t1">蓝牙音乐智能音箱</p>
+                <p class="t1">{{proDetail.shop_name}}</p>
                 <p class="t2">{{allprice}}积分</p>
               </div>
               <div class="button1">
@@ -42,11 +42,13 @@
             <p>购买数量</p>
             <div class="label">
               <button class="btn_minute" @click="btnMinute">-</button>
-              <input type="text" value="0" size="1" v-model="count" />
+              <input type="text" value="0" size="1" v-model="count" @blur="changeJG" />
               <button class="btn_add" @click="btnAdd">+</button>
             </div>
           </div>
-          <div class="exchange"><a href="">兑换</a></div>
+          <div class="exchange">
+            <a @click="exchange">兑换</a>
+          </div>
         </div>
       </div>
     </div>
@@ -57,15 +59,41 @@ export default {
   name: "prodetail",
   data() {
     return {
+      proDetail: "",
       play: false,
-      count:'1',
-      stock:'10',
-      integral:'3000',
-      allprice:'',
+      count: "1",
+      integral: "",
+      allprice: ""
     };
   },
   components: {},
   methods: {
+    // 兑换
+    exchange() {
+      var id = this.$route.query.id;
+      var serviceId = this.$route.query.service_id;
+      this.$router.push({
+        path: "/confirm",
+        query: {
+          service_id: serviceId,
+          nums: this.count,
+          allprice: this.allprice,
+          pic_url: this.proDetail.pic_url,
+          shop_name: this.proDetail.shop_name,
+          id: id
+        }
+      });
+    },
+    // 购买数量改变价格
+    changeJG() {
+      if (this.count < 1) {
+        alert("该宝贝不能减少了哟~");
+        this.count = 1;
+        this.allprice = this.count * this.proDetail.nums;
+      } else {
+        this.allprice = this.count * this.proDetail.nums;
+      }
+    },
     open() {
       this.play = true;
     },
@@ -78,25 +106,36 @@ export default {
         console.log("优惠商品限购一件哦~");
       } else {
         // 如果数量大于商品库存
-        if (this.count >= this.stock) {
-          console.log("该宝贝不能购买更多了~");
+        if (this.count >= this.proDetail.stock) {
+          alert("该宝贝不能购买更多了~");
         } else {
           this.count++;
-          this.allprice = this.count * this.integral;
+          this.allprice = this.count * this.proDetail.nums;
         }
       }
     },
     btnMinute(count) {
       if (this.count <= 1) {
-        Toast("该宝贝不能减少了哟~");
+        alert("该宝贝不能减少了哟~");
       } else {
         this.count--;
-        this.allprice = this.count * this.integral;
+        this.allprice = this.count * this.proDetail.nums;
       }
     }
   },
-  mounted() {
-    this.allprice = this.count * this.integral;
+  mounted() {},
+  created() {
+    var id = this.$route.query.id;
+    this.$axios
+      .get("/api/goods/goodsdetail", {
+        id: id,
+        token: this.$store.state.token1
+      })
+      .then(res => {
+        this.proDetail = res.data;
+        this.allprice = this.count * this.proDetail.nums;
+        console.log(res);
+      });
   }
 };
 </script>
@@ -121,25 +160,25 @@ export default {
         color: #333;
         text-align: left;
       }
-      .label{
+      .label {
         display: flex;
         flex-direction: row;
-        button{
-          width:50px;
+        button {
+          width: 50px;
           height: 50px;
           line-height: 42px;
           text-align: center;
           font-size: 28px;
-          border:1px solid #999;
+          border: 1px solid #999;
           background-color: #f1f1f1;
         }
-        input{
+        input {
           text-align: center;
           height: 50px;
-          width:60px;
-          border:1px solid #999;
+          width: 60px;
+          border: 1px solid #999;
           font-size: 28px;
-          color:#666;
+          color: #666;
         }
       }
     }
@@ -187,16 +226,16 @@ export default {
         }
       }
     }
-    .exchange{
-      width:90%;
+    .exchange {
+      width: 90%;
       margin: 10vh auto;
       border-radius: 50px;
       height: 85px;
       line-height: 85px;
       text-align: center;
       background-color: #ff4f59;
-      a{
-        color:#fff;
+      a {
+        color: #fff;
         font-size: 32px;
         display: block;
       }
@@ -208,7 +247,7 @@ export default {
   flex-direction: column;
   .banner {
     background-color: #f7f7f8;
-    height: 630px;
+    height: auto;
   }
   .box {
     .box_tit {

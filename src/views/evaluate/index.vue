@@ -13,11 +13,11 @@
             <el-rate v-model="ruleForm.value1" :colors="colors" show-text></el-rate>
           </div>
           <el-input v-model="ruleForm.value1" type="hidden"></el-input>
-           <div class="biaoqian">
+          <div class="biaoqian">
             <el-checkbox-group class="biaoqian_box" v-model="ruleForm.itemsstring">
-              <el-checkbox :label="item.key"  :key="item.key" v-for="item in ruleForm.type"></el-checkbox>
+              <el-checkbox :label="item.key" :key="item.key" v-for="item in ruleForm.type"></el-checkbox>
             </el-checkbox-group>
-          </div>         
+          </div>
           <el-input
             class="textarea_box"
             type="textarea"
@@ -38,13 +38,13 @@ export default {
   data() {
     return {
       colors: ["#99A9BF", "#F7BA2A", "#FF9900"],
-      sid:'',
+      sid: "",
       ruleForm: {
         value1: 4,
         type: ["态度良好", "干净"],
         desc: "不错,非常好的一次代驾体验",
         checked: false,
-        itemsstring:[]
+        itemsstring: []
       }
     };
   },
@@ -52,19 +52,22 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-            this.$axios.post('/api/order/evaluate',{
-              id:this.sid,
+          this.$axios
+            .post("/api/order/evaluate", {
+              id: this.sid,
               // id:'201910121658196504',
-              star:this.ruleForm.value1,
-              evaluate_item:this.ruleForm.itemsstring.join(','),
-              evaluate_reason:this.ruleForm.desc
-            }).then(res=>{
-              if(res.code == 200){
-                alert("提交成功！")
-              }else{
-                alert(res.message)
-              }
+              star: this.ruleForm.value1,
+              evaluate_item: this.ruleForm.itemsstring.join(","),
+              evaluate_reason: this.ruleForm.desc,
+              token: this.$store.state.token1
             })
+            .then(res => {
+              if (res.code == 200) {
+                alert("提交成功！");
+              } else {
+                alert(res.message);
+              }
+            });
         } else {
           return false;
         }
@@ -72,21 +75,21 @@ export default {
     }
   },
   created() {
-      this.sid=this.$route.query.order_id;
-      this.$axios.get("/api/parameter/item", {pid: 'ORDER_EVALUATE'}).then(res=>{
-           if (res.code == 200) {
-                this.ruleForm.type=res.data
-                console.log(this.ruleForm.type)
-           }else{
-
-           }
-        })
-    }
-
+    this.sid = this.$route.query.order_id;
+    this.$axios
+      .get("/api/parameter/item", { pid: "ORDER_EVALUATE" })
+      .then(res => {
+        if (res.code == 200) {
+          this.ruleForm.type = res.data;
+          console.log(this.ruleForm.type);
+        } else {
+        }
+      });
+  }
 };
 </script>
 <style lang="less" scoped>
-.eva_form{
+.eva_form {
   margin-bottom: 60px;
 }
 .evaluate {

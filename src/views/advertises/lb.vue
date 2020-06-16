@@ -1,7 +1,7 @@
 <template>
   <div class="adv_bg">
     <div class="adv_banner">
-      <img src="../../img/hsfbanner1.jpg" />
+      <img src="../../img/hsfbanner2.jpg" />
     </div>
     <div class="adv_1">
       <div class="adv_ti">
@@ -9,7 +9,7 @@
       </div>
       <div
         class="adv_1_1"
-      >洪师傅酒后代驾成立于2013年，成立以来始终把服务顾客，留住顾客,赢得顾客当成宗旨坚持执行到位，目前覆盖100多个城市，同时上线达到万余名的司机覆盖率，正常到达速度10分钟内，同时还为顾客提供5大保障:</div>
+      >萝卜代驾成立于2015年，成立以来始终把服务顾客，留住顾客,赢得顾客当成宗旨坚持执行到位，目前覆盖100多个城市，同时上线达到万余名的司机覆盖率，正常到达速度10分钟内，同时还为顾客提供5大保障:</div>
       <div class>
         <img src="../../img/hsfimg10.jpg" />
       </div>
@@ -216,9 +216,9 @@ export default {
 </script>
 <style lang="less">
 .adv_bg {
-  background: -moz-linear-gradient(right, #2d6efc, #1b8cf6);
-  background: -webkit-linear-gradient(right, #2d6efc, #1b8cf6);
-  background: linear-gradient(to right, #2d6efc, #1b8cf6);
+  background: -moz-linear-gradient(right, #ff1717, #ff1717);
+  background: -webkit-linear-gradient(right, #ff1717, #ff1717);
+  background: linear-gradient(to right, #ff1717, #ff1717);
   padding-bottom: 2px;
 }
 .adv_1 {
@@ -236,14 +236,14 @@ export default {
   height: 65px;
   margin: 0px auto 0px !important;
   font-size: 24px;
-  background-color: #3366ff !important;
+  background-color: #ff3030 !important;
   display: block;
   border: 0px;
   color: #fff;
 }
 .adv_ti {
   font-size: 1.2rem;
-  background: url(../../img/hsfimg9.png);
+  background: url(../../img/hsfimg9_1.png);
   background-repeat: no-repeat;
   height: calc(0.1583 * (100vw - 6.01rem));
   margin-left: 0.8rem;
@@ -255,6 +255,9 @@ export default {
   display: flex;
   font-weight: bold;
   letter-spacing: 0.25rem;
+  width: 384px;
+  height: 72px;
+  margin: 0px auto;
 }
 .adv_ti span {
   align-self: center;
@@ -445,11 +448,11 @@ export default {
 .hotline {
   width: 100%;
   font-size: 30px;
-  a{
-    color:#1b8cf6;
+  a {
+    color: #1b8cf6;
   }
 }
-.hotline_botton{
+.hotline_botton {
   float: right;
 }
 </style>

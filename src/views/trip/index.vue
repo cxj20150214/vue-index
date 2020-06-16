@@ -27,23 +27,23 @@
 </template>
 <script>
 export default {
-  name: 'trip',
+  name: "trip",
   mounted() {
     // this.getTrajectory();
     this.tracker();
   },
   data() {
     return {
-      total_minute:'',
-      order_address:'',
-      order_destination_address:'',
-      mileage:'',
-      money:'',
+      total_minute: "",
+      order_address: "",
+      order_destination_address: "",
+      mileage: "",
+      money: "",
       map: "",
-      openid:this.$store.state.openid,
-      platform:'official_accounts',
-      access_token:'',
-      orderId:'',
+      openid: this.$store.state.openid,
+      platform: "official_accounts",
+      access_token: this.$store.state.token1,
+      orderId: "",
       resData: {
         markers: [
           // {
@@ -63,7 +63,6 @@ export default {
           // { lat: 39.864758, lng: 116.378706 },
           // { lat: 39.864758, lng: 116.378706 },
           // { lat: 39.864902, lng: 116.37893 },
-         
         ]
       },
       markersNew: [], //markers 经纬度点的集合
@@ -71,16 +70,16 @@ export default {
     };
   },
   methods: {
-    routerEvaluate(){
-      let order_id  = this.$route.query.order_id;
-      let service_id  = this.$route.query.service_id;
+    routerEvaluate() {
+      let order_id = this.$route.query.order_id;
+      let service_id = this.$route.query.service_id;
       this.$router.push({
-                path: 'evaluate', 
-                query: {
-                  order_id: order_id,
-                  service_id:service_id
-                  }
-     })
+        path: "evaluate",
+        query: {
+          order_id: order_id,
+          service_id: service_id
+        }
+      });
     },
     init() {
       let myOptions = {
@@ -324,140 +323,148 @@ export default {
         // marker.setRotation(rotation); //设置marker角度  rotation属性取值范围0-360,支持IE9及以上版本
       }
     },
-    getTrajectory(){
-      this.$axios.post('/api/auth/quick_login',{
-        platform:this.platform,
-        openid:this.openid,
-      }).then(res =>{
-        console.log(res,'快捷登录获取token')
-        if(res.code == 200){
-          let data = res.data;
-          this.$store.commit('set_token', 'bearer ' + data.access_token);
-          this.access_token = res.data.access_token
-          // this.$router.go(0);
-          window.location.reload()
-        }
-      })
+    getTrajectory() {
+      this.$axios
+        .post("/api/auth/quick_login", {
+          platform: this.platform,
+          openid: this.openid
+        })
+        .then(res => {
+          console.log(res, "快捷登录获取token");
+          if (res.code == 200) {
+            let data = res.data;
+            this.$store.commit("set_token", "bearer " + data.access_token);
+            this.access_token = res.data.access_token;
+            // this.$router.go(0);
+            window.location.reload();
+          }
+        });
     },
-    tracker(){
-      let id  = this.$route.query.order_id;
-      this.$axios.get('/api/order/tracker',{
-            id:id,
-            token:this.access_token
-            }).then(res =>{
-              console.log(res,'获取轨迹')
-              if(res.code == 200){
-                if(res.data.points.length ==0){
-                  console.log('没有轨迹，拿订单详情接口');
-                  this.$axios.get('/api/order/detail',{
-                     id:id,
-                     token:this.access_token
-                  })
-                  .then(res=>{
-                    if(res.code = 200){
-                        console.log(res,'获取到详情')
-                        let Mrheji=[];
-                        let markerheji =[]
-                        var Mrline ={}
-                        var Mr_lng = res.data.order_lng
-                        var Mr_lat = res.data.order_lat
-                        Mrline.lat = Mr_lat
-                        Mrline.lng = Mr_lng
-                        Mrheji.push(Mrline)
-                        this.resData.path = Mrheji
-                        Mrheji[0].nodeMapType = 2
-                        markerheji.push(Mrheji[0])
-                        this.resData.markers = markerheji
-                        this.init();
-                        this.order_address = res.data.order_address
-                        this.order_destination_address =  res.data.order_destination_address
-                        this.money = res.data.money
-                        this.mileage =res.data.mileage
-                        this.total_minute =res.data.total_minute
-                    }
-                   })
-                   
-                }else{
-                  var i= ''
-                  var number = res.data.points.length;
-                  let lineheji=[];
-                  let markerheji =[]
-                  for(var i = 0; i<number; i++) {
-                    var lineObj ={}
- 　　               var line = res.data.points[i].location
-                    var linelng =line.match(/(\S*),/)[0]
-                    var linelng1 = linelng.substring(0,linelng.length-1)
-                    var linelat = line.match(/,(\S*)/)[0]
-                    var linelat1 =linelat.substr(1);
-                    lineObj.lat = linelat1;
-                    lineObj.lng = linelng1;
-                    lineheji.push(lineObj)
+    tracker() {
+      let id = this.$route.query.order_id;
+      this.$axios
+        .get("/api/order/tracker", {
+          id: id,
+          token: this.access_token
+        })
+        .then(res => {
+          console.log(res, "获取轨迹");
+          if (res.code == 200) {
+            if (res.data.points.length == 0) {
+              console.log("没有轨迹，拿订单详情接口");
+              this.$axios
+                .get("/api/order/detail", {
+                  id: id,
+                  token: this.access_token
+                })
+                .then(res => {
+                  if ((res.code = 200)) {
+                    console.log(res, "获取到详情");
+                    let Mrheji = [];
+                    let markerheji = [];
+                    var Mrline = {};
+                    var Mr_lng = res.data.order_lng;
+                    var Mr_lat = res.data.order_lat;
+                    Mrline.lat = Mr_lat;
+                    Mrline.lng = Mr_lng;
+                    Mrheji.push(Mrline);
+                    this.resData.path = Mrheji;
+                    Mrheji[0].nodeMapType = 2;
+                    markerheji.push(Mrheji[0]);
+                    this.resData.markers = markerheji;
+                    this.init();
+                    this.order_address = res.data.order_address;
+                    this.order_destination_address =
+                      res.data.order_destination_address;
+                    this.money = res.data.money;
+                    this.mileage = res.data.mileage;
+                    this.total_minute = res.data.total_minute;
                   }
-                  this.resData.path = lineheji
-                  lineheji[0].nodeMapType = 2
-                  lineheji[number-1].nodeMapType = 5
-                  markerheji.push(lineheji[0])
-                  markerheji.push(lineheji[number-1])
-                  this.resData.markers = markerheji
-                  console.log(markerheji)
-                  // console.log(this.resData.path)
-                  this.init();
-                  this.orderDetail();
-                }
-              }else{
-                  // this.$router.go(0);
+                });
+            } else {
+              var i = "";
+              var number = res.data.points.length;
+              let lineheji = [];
+              let markerheji = [];
+              for (var i = 0; i < number; i++) {
+                var lineObj = {};
+                var line = res.data.points[i].location;
+                var linelng = line.match(/(\S*),/)[0];
+                var linelng1 = linelng.substring(0, linelng.length - 1);
+                var linelat = line.match(/,(\S*)/)[0];
+                var linelat1 = linelat.substr(1);
+                lineObj.lat = linelat1;
+                lineObj.lng = linelng1;
+                lineheji.push(lineObj);
               }
-          })
+              this.resData.path = lineheji;
+              lineheji[0].nodeMapType = 2;
+              lineheji[number - 1].nodeMapType = 5;
+              markerheji.push(lineheji[0]);
+              markerheji.push(lineheji[number - 1]);
+              this.resData.markers = markerheji;
+              console.log(markerheji);
+              // console.log(this.resData.path)
+              this.init();
+              this.orderDetail();
+            }
+          } else {
+            // this.$router.go(0);
+          }
+        });
     },
-    orderDetail(){
-      let id  = this.$route.query.order_id;
+    orderDetail() {
+      let id = this.$route.query.order_id;
       let newurl = id.substring(0, 18);
-      this.$axios.get('/api/order/detail',{
-        id:newurl,
-        token:this.access_token
-      })
-      .then(res=>{
-        console.log(res)
-        this.order_address = res.data.order_address
-        this.order_destination_address =  res.data.order_destination_address
-        this.money = res.data.money
-        this.mileage =res.data.mileage
-        this.total_minute =res.data.total_minute
-      })
+      this.$axios
+        .get("/api/order/detail", {
+          id: newurl,
+          token: this.access_token
+        })
+        .then(res => {
+          console.log(res);
+          this.order_address = res.data.order_address;
+          this.order_destination_address = res.data.order_destination_address;
+          this.money = res.data.money;
+          this.mileage = res.data.mileage;
+          this.total_minute = res.data.total_minute;
+        });
     },
     getCodeApi(state) {
       //获取code
-      var thisUrl = this.$route.fullPath
-      if(thisUrl.indexOf("service_id") == -1){
-        this.$axios.get('/api/wechat/info/appid',{
-         service_id:2
-       })
-       .then(res=>{
-          console.log(res,'获取到appid');
-          let urlNow = encodeURIComponent(window.location.href);
-          let scope = "snsapi_userinfo"; //snsapi_userinfo   //静默授权 用户无感知
-          let appid = "";
-          appid = res.data
-          console.log(appid)
-          let url = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${appid}&redirect_uri=${urlNow}&response_type=code&scope=${scope}&state=${state}#wechat_redirect`;
-          window.location.replace(url);
-       })
+      var thisUrl = this.$route.fullPath;
+      if (thisUrl.indexOf("service_id") == -1) {
+        this.$axios
+          .get("/api/wechat/info/appid", {
+            service_id: 2
+          })
+          .then(res => {
+            console.log(res, "获取到appid");
+            let urlNow = encodeURIComponent(window.location.href);
+            let scope = "snsapi_userinfo"; //snsapi_userinfo   //静默授权 用户无感知
+            let appid = "";
+            appid = res.data;
+            console.log(appid);
+            let url = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${appid}&redirect_uri=${urlNow}&response_type=code&scope=${scope}&state=${state}#wechat_redirect`;
+            window.location.replace(url);
+          });
       }
-      if(thisUrl.indexOf("service_id") != -1){
-        let service_id =  this.$route.query.service_id
-        this.$axios.get('/api/wechat/info/appid',{
-         service_id:service_id
-       })
-       .then(res=>{
-          console.log(res,'获取到appid');
-          let urlNow = encodeURIComponent(window.location.href);
-          let scope = "snsapi_userinfo"; //snsapi_userinfo   //静默授权 用户无感知
-          let appid = "";
-          appid = res.data
-          console.log(appid)
-          let url = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${appid}&redirect_uri=${urlNow}&response_type=code&scope=${scope}&state=${state}#wechat_redirect`;
-          window.location.replace(url);
-       })
+      if (thisUrl.indexOf("service_id") != -1) {
+        let service_id = this.$route.query.service_id;
+        this.$axios
+          .get("/api/wechat/info/appid", {
+            service_id: service_id
+          })
+          .then(res => {
+            console.log(res, "获取到appid");
+            let urlNow = encodeURIComponent(window.location.href);
+            let scope = "snsapi_userinfo"; //snsapi_userinfo   //静默授权 用户无感知
+            let appid = "";
+            appid = res.data;
+            console.log(appid);
+            let url = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${appid}&redirect_uri=${urlNow}&response_type=code&scope=${scope}&state=${state}#wechat_redirect`;
+            window.location.replace(url);
+          });
       }
     },
     getUrlKey(name) {
@@ -475,15 +482,13 @@ export default {
     //返回值
     let code = this.getUrlKey("code");
     if (code) {
-      this.$axios
-        .post("/api/auth/wechatinfo?code=" + code)
-        .then(res => {
-          console.log(res,'获取openid');
-          if(res.code == 200){
-            this.openid = res.data.original.openid;
-            this.getTrajectory();
-          }
-        });
+      this.$axios.post("/api/auth/wechatinfo?code=" + code).then(res => {
+        console.log(res, "获取openid");
+        if (res.code == 200) {
+          this.openid = res.data.original.openid;
+          this.getTrajectory();
+        }
+      });
     } else {
       this.getCodeApi("123");
     }

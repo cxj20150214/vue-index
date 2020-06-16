@@ -1,71 +1,52 @@
 <template>
-  <div>
+  <div :style="{'width':this.$store.state.width_s+'px'}">
     <div class="shopinte">
       <div class="box1">
         <div class="txt">
           <p class="tit1">当前积分</p>
-          <p class="tit2">2800</p>
-          <p class="tit3">今日获取积分：100</p>
+          <p class="tit2">{{myNums}}</p>
+          <!--<p class="tit3">今日获取积分：100</p>-->
         </div>
         <div class="dh">
-          <a href>兑换</a>
+          <a @click="toShopmall">兑换</a>
         </div>
       </div>
       <div class="box2">
         <div class="tabs">
-          <ul>
+          <!-- <ul>
             <li @click="num=0" class="first" :class="{active:num==0}">积分明细</li>
             <li @click="num=1" :class="{active:num==1}">兑换记录</li>
-          </ul>
+          </ul>-->
         </div>
         <div class="content">
           <div class="user" v-show="num==0">
             <div class="card">
               <ul>
-                <li>
+                <li v-for="item in querylist">
                   <div class="tit">
-                    <p class="t1">活动获取积分</p>
-                    <p class="t2">2019-12-02 22:24</p>
+                    <p class="t1">{{item.remark}}</p>
+                    <p class="t2">{{item.created_at}}</p>
                   </div>
-                  <p class="t3">+100</p>
-                </li>
-                <li>
-                  <div class="tit">
-                    <p class="t1">活动获取积分</p>
-                    <p class="t2">2019-12-02 22:24</p>
-                  </div>
-                  <p class="t3">+100</p>
-                </li>
-                <li>
-                  <div class="tit">
-                    <p class="t1">活动获取积分</p>
-                    <p class="t2">2019-12-02 22:24</p>
-                  </div>
-                  <p class="t3">+100</p>
+                  <p class="t3" :class="addClass(item.type)">{{item.nums}}</p>
                 </li>
               </ul>
+              <div class="unlist" v-show="shownolist=0">您还没有积分明细。</div>
             </div>
           </div>
-          <div class="user" v-show="num==1">
+          <!--<div class="user" v-show="num==1">
             <div class="card">
               <ul>
-                <li>
+                  <li v-for="item in duihlist">
                   <div class="tit">
-                    <p class="t1">积分商城兑换商品</p>
-                    <p class="t2">2019-12-02 22:24</p>
+                    <p class="t1">{{item.name}}</p>
+                    <p class="t2">{{item.time}}</p>
                   </div>
-                  <p class="t3 dh">-100</p>
-                </li>
-                <li>
-                  <div class="tit">
-                    <p class="t1">积分商城兑换商品</p>
-                    <p class="t2">2019-12-02 22:24</p>
-                  </div>
-                  <p class="t3 dh">-100</p>
+                  <p class="t3 dh">{{item.jf}}</p>
                 </li>
               </ul>
+              <div class="unlist" v-show="shownolist1==0">您还没有兑换记录。</div>
             </div>
-          </div>
+          </div>-->
         </div>
       </div>
     </div>
@@ -76,18 +57,101 @@ export default {
   name: "shopinte",
   data() {
     return {
-      num: 0
+      num: 0,
+      myNums: this.$route.query.myNums,
+      querylist: "",
+      duihlist: "",
+      shownolist: "",
+      shownolist1: ""
     };
   },
   components: {},
-  methods: {},
-  mounted() {}
+  methods: {
+    // 样式渲染
+    addClass(i) {
+      switch (i) {
+        case "reduce":
+          return "dh";
+      }
+    },
+    toShopmall() {
+      var serviceId = this.$route.query.service_id;
+      this.$router.push({
+        path: "/shopmall",
+        query: {
+          service_id: serviceId,
+          myNums: this.$route.query.myNums
+        }
+      });
+    }
+  },
+  mounted() {},
+  created() {
+    var userId = this.$route.query.user_id;
+    // 获取积分明细
+    this.$axios
+      .get("/api/user/credit/list", {
+        user_id: userId,
+        token: this.$store.state.token1
+      })
+      .then(res => {
+        if (res.code == 200) {
+          // res.data.list = [
+          //   {
+          //     name: "活动获取积分",
+          //     time: "2019-12-02 22:24",
+          //     jf: "+100"
+          //   },
+          //   {
+          //     name: "活动获取积分",
+          //     time: "2019-12-22 22:24",
+          //     jf: "+200"
+          //   }
+          // ];
+          // res.data.list = [];
+          this.querylist = res.data.list;
+          console.log(this.querylist);
+          if (res.data.total == 0) {
+            console.log("列表为空");
+            this.shownolist = 0;
+          }
+        }
+      });
+    // 获取兑换记录
+    this.$axios
+      .get("/api/goods/exchangelist", {
+        token: this.$store.state.token1
+      })
+      .then(res => {
+        if (res.code == 200) {
+          // res.data.list = [
+          //   {
+          //     name: "活动获取积分",
+          //     time: "2019-12-02 22:24",
+          //     jf: "-100"
+          //   },
+          //   {
+          //     name: "活动获取积分",
+          //     time: "2019-12-22 22:24",
+          //     jf: "-200"
+          //   }
+          // ];
+          res.data.list = [];
+          this.duihlist = res.data.list;
+          console.log(this.duihlist);
+          if (res.data.total == 0) {
+            console.log("兑换记录为空");
+            this.shownolist1 = 0;
+          }
+        }
+      });
+  }
 };
 </script>
 <style lang="less" scoped>
 .shopinte {
   .box1 {
-    height: 250px;
+    height: 165px;
     padding: 60px;
     display: flex;
     flex-direction: row;
@@ -99,7 +163,7 @@ export default {
       line-height: 65px;
       border-radius: 50px;
       background-color: #fff;
-      margin-top: 120px;
+      margin-top: 65px;
       a {
         display: block;
         color: #ef4e42;
@@ -168,23 +232,34 @@ export default {
           display: flex;
           flex-direction: row;
           justify-content: space-between;
-          .tit{
+          .tit {
             text-align: left;
-            .t1{
+            .t1 {
               font-size: 28px;
               margin-top: 15px;
             }
-            .t2{
+            .t2 {
               font-size: 25px;
               color: #888;
             }
           }
-          .t3{
+          .t3 {
             font-size: 28px;
-            color:#2ad45e;
+            color: #2ad45e;
             margin-top: 30px;
-            &.dh{
-              color:#f29c20;
+            position: relative;
+            &.dh {
+              color: #f29c20;
+              position: relative;
+              &:before {
+                content: "";
+                position: absolute;
+                width: 12px;
+                height: 3px;
+                background-color: #f29c20;
+                left: -20px;
+                top: 19px;
+              }
             }
           }
         }

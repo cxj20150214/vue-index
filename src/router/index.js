@@ -4,6 +4,7 @@ import index from '@/views/index/index'
 import address from '@/views/address/address'
 import callDriver from '@/views/callDriver/index'
 import advertises from '@/views/advertises/index'
+import advertiseslb from '@/views/advertises/lb'
 import recommend from '@/views/recommend/index'
 import tixian from '@/views/recommend/tixian'
 import reward from '@/views/recommend/reward'
@@ -20,6 +21,10 @@ import shopbind from '@/views/shopcenter/bind'
 import shopmall from '@/views/shopmall/index'
 import prodetail from '@/views/shopmall/prodetail'
 import confirm from '@/views/shopmall/confirm'
+import agreement from '@/views/agreement/index'
+import gift from '@/views/shopcard/gift'
+import shoporder from '@/views/shoporder/index'
+import shoporderDetail from '@/views/shoporder/detail'
 Vue.use(Router)
 if (sessionStorage.getItem('token')) {
   store.commit('set_token', sessionStorage.getItem('token'))
@@ -46,11 +51,18 @@ const router= new Router({
       name: 'address',
       component: address,
       meta: {
-        title: ''
+        title: '',
+        index:1
       }
     },
     {
       path:'/advertises',name:'advertises',component: advertises,
+      meta: {
+        title: ''
+      }
+    },
+    {
+      path:'/advertiseslb',name:'advertiseslb',component: advertiseslb,
       meta: {
         title: ''
       }
@@ -94,7 +106,8 @@ const router= new Router({
       name: 'evaluate',
       component: evaluate,
       meta: {
-        title: ''
+        title: '',
+        index:2
       }
     },
     {
@@ -110,7 +123,8 @@ const router= new Router({
       name: 'hotline',
       component: hotline,
       meta: {
-        title: ''
+        title: '',
+        index:1
       }
     },
     {
@@ -122,45 +136,80 @@ const router= new Router({
     {
       path:'/shopcenter',name:'shopcenter',component: shopcenter,
       meta: {
-        title: ''
+        title: '',
+        index:0
       }
     },
     {
       path:'/shopcard',name:'shopcard',component: shopcard,
       meta: {
-        title: ''
+        title: '',
+        index:1
+      }
+    },
+    {
+      path:'/shoporder',name:'shoporder',component: shoporder,
+      meta: {
+        title: '',
+        index:1
+      }
+    },
+    {
+      path:'/shoporderDetail',name:'shoporderDetail',component: shoporderDetail,
+      meta: {
+        title: '',
+        index:2
       }
     },
     {
       path:'/shopinte',name:'shopinte',component: shopinte,
       meta: {
-        title: ''
+        title: '',
+        index:1
       }
     },
     {
       path:'/shopbind',name:'shopbind',component: shopbind,
       meta: {
-        title: ''
+        title: '',
+        index:1
       }
     },
     {
       path:'/shopmall',name:'shopmall',component: shopmall,
       meta: {
-        title: ''
+        title: '',
+        index:1
       }
     },
     {
       path:'/prodetail',name:'prodetail',component: prodetail,
       meta: {
-        title: ''
+        title: '',
+        index:2
       }
     },
     {
       path:'/confirm',name:'confirm',component: confirm,
       meta: {
-        title: ''
+        title: '',
+        index:3
       }
     },
+    {
+      path:'/agreement',name:'agreement',component: agreement,
+      meta: {
+        title: '',
+        index:1
+      }
+    },
+    {
+      path:'/gift',name:'gift',component: gift,
+      meta: {
+        title: '',
+        index:1
+      }
+    }
   ],
 })
 // router.beforeEach((to,from,next)=>{

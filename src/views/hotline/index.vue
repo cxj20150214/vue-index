@@ -1,5 +1,5 @@
 <template>
-  <div ref="hehe">
+  <div ref="hehe" :style="{'width':this.$store.state.width_s+'px'}">
     <div class="hotline">
         <div class="linesearch">
             <div class="linein">

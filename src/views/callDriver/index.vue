@@ -20,7 +20,7 @@
           </p>
         </div>
       </div>
-      <p class="qibu"><router-link to="/address">点击查看地区服务价格</router-link></p>
+      <p class="qibu"><a :href="'#/address?service_id='+this.$route.query.service_id">点击查看地区服务价格</a></p>
       <el-button
         type="danger"
         class="button_hujiao"
@@ -117,12 +117,14 @@ export default {
     },
     maplink(){
       let thisUrl = encodeURIComponent(window.location.href);
-      window.location.href =`https://apis.map.qq.com/tools/locpicker?search=1&type=0&backurl=${thisUrl}&key=CCHBZ-QHXK5-4VKIO-QYX6L-ODEHV-EZBXB&referer=洪师傅-h5`
+      window.location.href =`https://apis.map.qq.com/tools/locpicker?search=1&type=0&backurl=${thisUrl}&key=BBQBZ-F5AW6-MN6SV-EJ5GS-5SUL7-S3BC5&referer=洪师傅代驾`
     },
     getMyLocation() {
-                var geolocation = new qq.maps.Geolocation("CCHBZ-QHXK5-4VKIO-QYX6L-ODEHV-EZBXB", "洪师傅-h5");
-                // geolocation.getIpLocation(this.showPosition, this.showErr);
-                geolocation.getLocation(this.showPosition, this.showErr);//或者用getLocation精确度比较高
+                var geolocation = new qq.maps.Geolocation("BBQBZ-F5AW6-MN6SV-EJ5GS-5SUL7-S3BC5", "洪师傅代驾");
+                geolocation.getIpLocation(this.showPosition, this.showErr);
+
+                // geolocation.getLocation(this.showPosition, this.showErr);//或者用getLocation精确度比较高
+
             },
             showPosition(position) {
                 console.log(position);
@@ -285,7 +287,7 @@ export default {
           let data = res.data;
           this.$store.commit('set_token', 'bearer ' + data.access_token);
           // this.$router.go(0);
-          window.location.reload()
+          // window.location.reload()
         }
         if(res.code ==422){
           this.dialogFormVisible =true
