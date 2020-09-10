@@ -1,6 +1,6 @@
 # official_website_html
 
-> A Vue.js project
+> 基于vue、腾讯地图 搭建的代驾项目
 
 ## Build Setup
 
