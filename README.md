@@ -1,6 +1,6 @@
 
 # 基于vue、腾讯地图 搭建的代驾项目
-
+ ![](http://i1.piimg.com/588926/d1cb3dda0bdf8cd1.png)
 ## Build Setup
 
 ``` bash
